@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "name": "sprint01_2",
+  "builds": [{ "src": "src/index.ts", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "src/index.ts" }]
+}
