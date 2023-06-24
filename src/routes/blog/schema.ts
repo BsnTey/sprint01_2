@@ -19,7 +19,7 @@ export const checkBlogRoute = checkSchema({
     isString: true,
     isLength: { options: { max: 100 } },
     matches: {
-      options: "^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$",
+      options: "^https://([a-zA-Z0-9_-]+.)+[a-zA-Z0-9_-]+(/[a-zA-Z0-9_-]+)*/?$",
     },
   },
 });

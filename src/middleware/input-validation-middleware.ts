@@ -10,6 +10,7 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
       // @ts-ignore
       return { message: err.msg, field: err.path };
     });
+    console.log(errors);
     res.status(400).json({ errorsMessages: reformattedErrors });
   } else {
     next();

@@ -1,11 +1,9 @@
 import { Request, Response } from "express";
 import { app } from "./setting";
-import dotenv from "dotenv";
-import { databaseBlogs, databasePosts } from "./setting";
+import { postRepository } from "./database/repository/posts-repository";
+import { blogRepository } from "./database/repository/blogs-repository";
 
-dotenv.config();
-
-const port = process.env.PORT || 5000;
+import { port } from "./constant";
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
@@ -16,7 +14,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.delete("/testing/all-data", (req: Request, res: Response) => {
-  databaseBlogs.clearDB();
-  databasePosts.clearDB();
+  postRepository.deleteAll();
+  blogRepository.deleteAll();
   res.sendStatus(204);
 });
