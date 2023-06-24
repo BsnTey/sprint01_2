@@ -22,6 +22,7 @@ export const checkPostRoute = checkSchema({
   blogId: {
     trim: true,
     notEmpty: true,
-    isString: true,
+    // не верно в swagger. это число
+    isNumeric: true,
   },
 });

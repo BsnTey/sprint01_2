@@ -17,6 +17,7 @@ blogsRoute.post("/", isAuthMiddleware, checkBlogRoute, inputValidationMiddleware
     id: Date.now().toString(),
     isMembership: false,
     ...req.body,
+
     createdAt: new Date().toISOString(),
   };
 
