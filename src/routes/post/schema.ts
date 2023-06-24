@@ -22,6 +22,6 @@ export const checkPostRoute = checkSchema({
   blogId: {
     trim: true,
     notEmpty: true,
-    isNumeric: true,
+    isString: true,
   },
 });

@@ -17,6 +17,7 @@ postsRoute.post("/", isAuthMiddleware, checkPostRoute, inputValidationMiddleware
     ...req.body,
     id: Date.now().toString(),
     blogName: "string",
+    createdAt: new Date().toISOString(),
   };
 
   const result = await postRepository.insertPost(data);
