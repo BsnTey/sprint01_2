@@ -7,7 +7,9 @@ export const postsService = {
   async createPost(body: CreatePostDto): Promise<PostDatabase | null> {
     const id = Date.now().toString();
     const data = {
-      ...body,
+      title: body.title,
+      shortDescription: body.shortDescription,
+      content: body.content,
       id,
       blogName: "string",
       createdAt: new Date().toISOString(),
@@ -23,7 +25,9 @@ export const postsService = {
     if (!data) return false;
     data = {
       ...data,
-      ...body,
+      title: body.title,
+      shortDescription: body.shortDescription,
+      content: body.content,
     };
     return await postCqrsRepository.updatePost(data);
   },

@@ -8,8 +8,8 @@ import { blogsService } from "./service/blogs-service";
 
 export const blogsRoute = Router({});
 
-blogsRoute.get("/", async (_req: Request, res: ResponseBody<BlogDatabase[]>) => {
-  const data = await blogQueryRepository.findAllBlogs();
+blogsRoute.get("/", async (req: Request, res: ResponseBody<BlogDatabase[]>) => {
+  const data = await blogQueryRepository.findAllBlogs(req.query);
   return res.json(data);
 });
 

@@ -7,9 +7,11 @@ export const blogsService = {
   async createPost(body: CreateBlogDto): Promise<BlogDatabase | null> {
     const id = Date.now().toString();
     const data = {
+      name: body.name,
+      description: body.description,
+      websiteUrl: body.websiteUrl,
       id,
       isMembership: false,
-      ...body,
       createdAt: new Date().toISOString(),
     };
 
@@ -23,7 +25,9 @@ export const blogsService = {
     if (!data) return false;
     data = {
       ...data,
-      ...body,
+      name: body.name,
+      description: body.description,
+      websiteUrl: body.websiteUrl,
     };
     return await blogCqrsRepository.updateBlog(data);
   },
