@@ -1,21 +1,8 @@
 import { DeleteResult, InsertOneResult, UpdateResult } from "mongodb";
-import { postsCollections } from "../../setting";
-import { PostDatabase } from "../../types";
+import { postsCollections } from "../../../setting";
+import { PostDatabase } from "../../../types";
 
-export const postRepository = {
-  async findAllPosts() {
-    return await postsCollections.find({}, { projection: { _id: 0 } }).toArray();
-  },
-
-  async findPostById(id: string) {
-    const post: PostDatabase | null = await postsCollections.findOne({ id: { $eq: id } }, { projection: { _id: 0 } });
-    if (post) {
-      return post;
-    } else {
-      return null;
-    }
-  },
-
+export const postCqrsRepository = {
   async insertPost(post: Partial<PostDatabase>) {
     const result: InsertOneResult<PostDatabase> = await postsCollections.insertOne(post as PostDatabase);
     return result.acknowledged;

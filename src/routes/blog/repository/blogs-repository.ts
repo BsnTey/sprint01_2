@@ -1,21 +1,8 @@
 import { DeleteResult, InsertOneResult, UpdateResult } from "mongodb";
-import { blogsCollections } from "../../setting";
-import { BlogDatabase } from "../../types";
+import { blogsCollections } from "../../../setting";
+import { BlogDatabase } from "../../../types";
 
-export const blogRepository = {
-  async findAllBlogs() {
-    return await blogsCollections.find({}, { projection: { _id: 0 } }).toArray();
-  },
-
-  async findBlogById(id: string) {
-    const blog: BlogDatabase | null = await blogsCollections.findOne({ id: { $eq: id } }, { projection: { _id: 0 } });
-    if (blog) {
-      return blog;
-    } else {
-      return null;
-    }
-  },
-
+export const blogCqrsRepository = {
   async insertBlog(blog: Partial<BlogDatabase>) {
     const result: InsertOneResult<BlogDatabase> = await blogsCollections.insertOne(blog as BlogDatabase);
     return result.acknowledged;

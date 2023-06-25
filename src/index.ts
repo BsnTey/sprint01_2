@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { app } from "./setting";
-import { postRepository } from "./database/repository/posts-repository";
-import { blogRepository } from "./database/repository/blogs-repository";
+import { postCqrsRepository } from "./routes/post/repository/posts-repository";
+import { blogCqrsRepository } from "./routes/blog/repository/blogs-repository";
 
 import { port } from "./constant";
 
@@ -14,7 +14,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.delete("/testing/all-data", (req: Request, res: Response) => {
-  postRepository.deleteAll();
-  blogRepository.deleteAll();
+  postCqrsRepository.deleteAll();
+  blogCqrsRepository.deleteAll();
   res.sendStatus(204);
 });
