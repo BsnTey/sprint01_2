@@ -15,6 +15,14 @@ export interface BlogDatabase {
   isMembership: boolean;
 }
 
+export interface OutputGetAllResponse<T> {
+  pagesCount: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  items: T[];
+}
+
 export interface PostDatabase {
   id: string;
   title: string;

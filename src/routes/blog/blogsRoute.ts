@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { BlogDatabase, RequestBody, RequestBodyId, ResponseBody } from "../../types";
+import { BlogDatabase, OutputGetAllResponse, RequestBody, RequestBodyId, ResponseBody } from "../../types";
 import { CreateBlogDto } from "./blog.dto";
 import { checkBlogRoute } from "./schema";
 import { inputValidationMiddleware, isAuthMiddleware } from "../../middleware/input-validation-middleware";
@@ -8,7 +8,7 @@ import { blogsService } from "./service/blogs-service";
 
 export const blogsRoute = Router({});
 
-blogsRoute.get("/", async (req: Request, res: ResponseBody<BlogDatabase[]>) => {
+blogsRoute.get("/", async (req: Request, res: ResponseBody<OutputGetAllResponse<BlogDatabase>>) => {
   const data = await blogQueryRepository.findAllBlogs(req.query);
   return res.json(data);
 });

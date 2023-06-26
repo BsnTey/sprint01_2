@@ -12,6 +12,7 @@ export const postsService = {
       content: body.content,
       id,
       blogName: "string",
+      blogId: body.blogId,
       createdAt: new Date().toISOString(),
     };
 
