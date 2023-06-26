@@ -1,15 +1,16 @@
 import { BlogDatabase } from "../../../types";
+import { getBlogParamsFromReq } from "../../../utils";
 import { CreateBlogDto } from "../blog.dto";
 import { blogCqrsRepository } from "../repository/blogs-repository";
 import { blogQueryRepository } from "../repository/query-blogs-repository";
 
 export const blogsService = {
-  async createPost(body: CreateBlogDto): Promise<BlogDatabase | null> {
+  async createPost(bodyParams: CreateBlogDto): Promise<BlogDatabase | null> {
+    const bodyParamsFilter = getBlogParamsFromReq(bodyParams);
+
     const id = Date.now().toString();
     const data = {
-      name: body.name,
-      description: body.description,
-      websiteUrl: body.websiteUrl,
+      ...bodyParamsFilter,
       id,
       isMembership: false,
       createdAt: new Date().toISOString(),
@@ -20,14 +21,12 @@ export const blogsService = {
     return null;
   },
 
-  async updatePost(id: string, body: CreateBlogDto): Promise<boolean> {
+  async updatePost(id: string, bodyParams: CreateBlogDto): Promise<boolean> {
     let data = await blogQueryRepository.findBlogById(id);
     if (!data) return false;
     data = {
       ...data,
-      name: body.name,
-      description: body.description,
-      websiteUrl: body.websiteUrl,
+      ...bodyParams,
     };
     return await blogCqrsRepository.updateBlog(data);
   },

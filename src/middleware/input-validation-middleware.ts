@@ -26,3 +26,13 @@ export const isAuthMiddleware = (req: Request, res: Response, next: NextFunction
     next();
   }
 };
+
+export const isValidIdMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const id: string = req.params.id;
+  if (!id || isNaN(Number(id))) {
+    res.sendStatus(400);
+    return;
+  } else {
+    next();
+  }
+};

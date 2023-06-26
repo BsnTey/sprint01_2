@@ -1,15 +1,19 @@
 import { Router, Request, Response } from "express";
-import { BlogDatabase, OutputGetAllResponse, RequestBody, RequestBodyId, ResponseBody } from "../../types";
+import { BlogDatabase, QueryParams, QueryParamsWithId, OutputGetAllResponse, PostDatabase, RequestBody, RequestBodyId, ResponseBody } from "../../types";
 import { CreateBlogDto } from "./blog.dto";
 import { checkBlogRoute } from "./schema";
-import { inputValidationMiddleware, isAuthMiddleware } from "../../middleware/input-validation-middleware";
+import { inputValidationMiddleware, isAuthMiddleware, isValidIdMiddleware } from "../../middleware/input-validation-middleware";
 import { blogQueryRepository } from "./repository/query-blogs-repository";
 import { blogsService } from "./service/blogs-service";
+import { postQueryRepository } from "../post/repository/query-posts-repository";
+import { getBlogParamsFromReq, getQueryFromReq } from "../../utils";
 
 export const blogsRoute = Router({});
 
 blogsRoute.get("/", async (req: Request, res: ResponseBody<OutputGetAllResponse<BlogDatabase>>) => {
-  const data = await blogQueryRepository.findAllBlogs(req.query);
+  const queryParams: QueryParams = getQueryFromReq(req.query);
+  console.log("get id", queryParams);
+  const data = await blogQueryRepository.findAllBlogs(queryParams);
   return res.json(data);
 });
 
@@ -20,23 +24,40 @@ blogsRoute.post("/", isAuthMiddleware, checkBlogRoute, inputValidationMiddleware
   return res.sendStatus(520);
 });
 
-blogsRoute.get("/:id", async (req: Request, res: Response) => {
-  const data = await blogQueryRepository.findBlogById(req.params.id);
+blogsRoute.get("/:id/posts", isValidIdMiddleware, async (req: Request, res: ResponseBody<OutputGetAllResponse<PostDatabase>>) => {
+  const idSearch = req.params.id;
+  const queryParams: any = getQueryFromReq(req.query, idSearch);
+  console.log("get id", queryParams);
+
+  const data = await postQueryRepository.findAllPosts(queryParams);
 
   if (!data) return res.sendStatus(404);
   return res.status(200).send(data);
 });
 
-blogsRoute.put("/:id", isAuthMiddleware, checkBlogRoute, inputValidationMiddleware, async (req: RequestBodyId<CreateBlogDto>, res: Response) => {
-  const idParams = req.params.id;
-  const result = await blogsService.updatePost(idParams, req.body);
+blogsRoute.get("/:id", async (req: Request, res: Response) => {
+  const idSearch = req.params.id;
+  if (isNaN(Number(idSearch))) res.sendStatus(400);
+
+  const data = await blogQueryRepository.findBlogById(idSearch);
+
+  if (!data) return res.sendStatus(404);
+  return res.status(200).send(data);
+});
+
+blogsRoute.put("/:id", isAuthMiddleware, isValidIdMiddleware, checkBlogRoute, inputValidationMiddleware, async (req: RequestBodyId<CreateBlogDto>, res: Response) => {
+  const idSearch = req.params.id;
+  const bodyParams = getBlogParamsFromReq(req.body);
+
+  const result = await blogsService.updatePost(idSearch, bodyParams);
   const status = result ? 204 : 404;
   return res.sendStatus(status);
 });
 
-blogsRoute.delete("/:id", isAuthMiddleware, async (req: Request, res: Response) => {
-  const idParams = req.params.id;
-  const result = await blogsService.deletePost(idParams);
+blogsRoute.delete("/:id", isAuthMiddleware, isValidIdMiddleware, async (req: Request, res: Response) => {
+  const idSearch = req.params.id;
+
+  const result = await blogsService.deletePost(idSearch);
   const status = result ? 204 : 404;
   return res.sendStatus(status);
 });
