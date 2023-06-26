@@ -39,7 +39,12 @@ blogsRoute.post(
     const isExcistBlog = await blogQueryRepository.findBlogById(idSearch);
     if (!isExcistBlog) return res.sendStatus(404);
 
-    const item = await postsService.createPost(req.body, isExcistBlog.name);
+    const blog = {
+      ...req.body,
+      blogId: idSearch,
+    };
+
+    const item = await postsService.createPost(blog, isExcistBlog.name);
 
     if (item) return res.status(201).send(item);
     return res.sendStatus(520);
