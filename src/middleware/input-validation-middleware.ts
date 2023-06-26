@@ -30,7 +30,7 @@ export const isAuthMiddleware = (req: Request, res: Response, next: NextFunction
 export const isValidIdMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const id: string = req.params.id;
   if (!id || isNaN(Number(id))) {
-    res.sendStatus(400);
+    res.sendStatus(404);
     return;
   } else {
     next();

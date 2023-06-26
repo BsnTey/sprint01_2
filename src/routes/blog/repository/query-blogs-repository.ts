@@ -4,7 +4,7 @@ import { QueryParamsWithId } from "../../../types";
 import { postQueryRepository } from "../../post/repository/query-posts-repository";
 
 export const blogQueryRepository = {
-  async findAllBlogs({ searchNameTerm = null, sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }) {
+  async findAllBlogs({ searchNameTerm = "", sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }) {
     const nameBlog = searchNameTerm ? { name: { $regex: new RegExp(searchNameTerm, "i") } } : {};
     console.log("findAllBlogs", pageNumber, pageSize, searchNameTerm);
     const totalCount = await blogsCollections.countDocuments(nameBlog);

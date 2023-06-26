@@ -1,19 +1,20 @@
 import { Router, Request, Response } from "express";
-import { BlogDatabase, QueryParams, QueryParamsWithId, OutputGetAllResponse, PostDatabase, RequestBody, RequestBodyId, ResponseBody } from "../../types";
+import { BlogDatabase, QueryParams, QueryParamsWithId, OutputGetAllResponse, PostDatabase, RequestBody, RequestBodyId, ResponseBody, QueryParamsWithTerm } from "../../types";
 import { CreateBlogDto } from "./blog.dto";
-import { checkBlogRoute } from "./schema";
+import { checkBlogCreatePostRoute, checkBlogRoute } from "./schema";
 import { inputValidationMiddleware, isAuthMiddleware, isValidIdMiddleware } from "../../middleware/input-validation-middleware";
 import { blogQueryRepository } from "./repository/query-blogs-repository";
 import { blogsService } from "./service/blogs-service";
 import { postQueryRepository } from "../post/repository/query-posts-repository";
-import { getBlogParamsFromReq, getQueryFromReq } from "../../utils";
+import { getBlogParamsFromReq, getQueryFromReq, getQueryFromReqBlog } from "../../utils";
 import { postsService } from "../post/service/posts-service";
 import { CreatePostDto } from "../post/post.dto";
 
 export const blogsRoute = Router({});
 
 blogsRoute.get("/", async (req: Request, res: ResponseBody<OutputGetAllResponse<BlogDatabase>>) => {
-  const queryParams: QueryParams = getQueryFromReq(req.query);
+  console.log("get id 0 ", req.query);
+  const queryParams: QueryParamsWithTerm = getQueryFromReqBlog(req.query);
   console.log("get id", queryParams);
   const data = await blogQueryRepository.findAllBlogs(queryParams);
   return res.json(data);
@@ -26,17 +27,24 @@ blogsRoute.post("/", isAuthMiddleware, checkBlogRoute, inputValidationMiddleware
   return res.sendStatus(520);
 });
 
-blogsRoute.post("/:id/posts", isAuthMiddleware, isValidIdMiddleware, checkBlogRoute, inputValidationMiddleware, async (req: RequestBodyId<CreatePostDto>, res: Response) => {
-  const idSearch = req.params.id;
+blogsRoute.post(
+  "/:id/posts",
+  isAuthMiddleware,
+  isValidIdMiddleware,
+  checkBlogCreatePostRoute,
+  inputValidationMiddleware,
+  async (req: RequestBodyId<CreatePostDto>, res: Response) => {
+    const idSearch = req.params.id;
 
-  const isExcistBlog = await blogQueryRepository.findBlogById(idSearch);
-  if (!isExcistBlog) return res.sendStatus(404);
+    const isExcistBlog = await blogQueryRepository.findBlogById(idSearch);
+    if (!isExcistBlog) return res.sendStatus(404);
 
-  const item = await postsService.createPost(req.body, isExcistBlog.name);
+    const item = await postsService.createPost(req.body, isExcistBlog.name);
 
-  if (item) return res.status(201).send(item);
-  return res.sendStatus(520);
-});
+    if (item) return res.status(201).send(item);
+    return res.sendStatus(520);
+  }
+);
 
 blogsRoute.get("/:id/posts", isValidIdMiddleware, async (req: Request, res: ResponseBody<OutputGetAllResponse<PostDatabase>>) => {
   const idSearch = req.params.id;

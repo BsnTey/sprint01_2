@@ -34,15 +34,15 @@ export interface PostDatabase {
   createdAt: string;
 }
 
-export type QueryParamsWithId = {
-  blogId: string;
+export type QueryParams = {
   sortBy?: string;
   sortDirection?: string;
   pageNumber?: number;
   pageSize?: number;
 };
 
-export type QueryParams = Omit<QueryParamsWithId, "blogId">;
+export type QueryParamsWithId = QueryParams & { blogId: string };
+export type QueryParamsWithTerm = QueryParams & { searchNameTerm?: string };
 
 export const TypeSortAskDesk: {
   [key: string]: SortDirection;
