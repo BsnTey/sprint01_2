@@ -5,7 +5,7 @@ import { blogCqrsRepository } from "../repository/blogs-repository";
 import { blogQueryRepository } from "../repository/query-blogs-repository";
 
 export const blogsService = {
-  async createPost(bodyParams: CreateBlogDto): Promise<BlogDatabase | null> {
+  async createBlog(bodyParams: CreateBlogDto): Promise<BlogDatabase | null> {
     const bodyParamsFilter = getBlogParamsFromReq(bodyParams);
 
     const id = Date.now().toString();
@@ -21,7 +21,7 @@ export const blogsService = {
     return null;
   },
 
-  async updatePost(id: string, bodyParams: CreateBlogDto): Promise<boolean> {
+  async updateBlog(id: string, bodyParams: CreateBlogDto): Promise<boolean> {
     let data = await blogQueryRepository.findBlogById(id);
     if (!data) return false;
     data = {
@@ -31,7 +31,7 @@ export const blogsService = {
     return await blogCqrsRepository.updateBlog(data);
   },
 
-  async deletePost(id: string): Promise<boolean> {
+  async deleteBlog(id: string): Promise<boolean> {
     let data = await blogQueryRepository.findBlogById(id);
     if (!data) return false;
     return await blogCqrsRepository.deleteBlog(id);

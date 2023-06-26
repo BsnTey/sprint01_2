@@ -26,19 +26,17 @@ postsRoute.post("/", isAuthMiddleware, checkPostRoute, inputValidationMiddleware
   return res.sendStatus(520);
 });
 
-postsRoute.get("/:id", async (req: Request, res: ResponseBody<PostDatabase>) => {
+postsRoute.get("/:id", isValidIdMiddleware, async (req: Request, res: ResponseBody<PostDatabase>) => {
   const idSearch = req.params.id;
-  if (isNaN(Number(idSearch))) res.sendStatus(400);
 
   const isExcistPost = await postQueryRepository.findPostById(idSearch);
   if (!isExcistPost) return res.sendStatus(404);
   return res.status(200).send(isExcistPost);
 });
 
-postsRoute.put("/:id", isAuthMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBodyId<CreatePostDto>, res: Response) => {
+postsRoute.put("/:id", isAuthMiddleware, isValidIdMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBodyId<CreatePostDto>, res: Response) => {
   const idSearch = req.params.id;
   let blogId = req.body.blogId;
-  if (isNaN(Number(idSearch))) res.sendStatus(400);
 
   const isExcistPost = await postQueryRepository.findPostById(idSearch);
   if (!isExcistPost) return res.sendStatus(404);
@@ -57,7 +55,7 @@ postsRoute.put("/:id", isAuthMiddleware, checkPostRoute, inputValidationMiddlewa
   return res.sendStatus(status);
 });
 
-postsRoute.delete("/:id", isAuthMiddleware, async (req: Request, res: Response) => {
+postsRoute.delete("/:id", isAuthMiddleware, isValidIdMiddleware, async (req: Request, res: Response) => {
   const idParams = req.params.id;
   const result = await postsService.deletePost(idParams);
   const status = result ? 204 : 404;
