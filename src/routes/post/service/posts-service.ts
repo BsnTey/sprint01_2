@@ -13,8 +13,8 @@ export const postsService = {
       createdAt: new Date().toISOString(),
     };
 
-    const res = await postCqrsRepository.insertPost(data);
-    if (res) return await postQueryRepository.findPostById(bodyParams.id);
+    const resId = await postCqrsRepository.insertPost(data);
+    if (resId) return await postQueryRepository.findPostById(resId.toString());
     return null;
   },
 

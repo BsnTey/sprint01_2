@@ -1,14 +1,13 @@
 import { Router, Request, Response } from "express";
 import { BlogDatabase, OutputGetAllResponse, PostDatabase, RequestBodyId, ResponseBody, QueryParamsWithTerm, RequestBodyBlogId, RequestBody } from "../../types";
 import { CreateBlogDto } from "./blog.dto";
-import { checkBlogCreatePostRoute, checkBlogRoute } from "./schema";
-import { inputValidationMiddleware, isAuthMiddleware, isExistIdBlogMiddleware, isValidIdMiddleware } from "../../middleware/input-validation-middleware";
+import { checkBlogRoute } from "./schema";
+import { inputValidationMiddleware, isAuthMiddleware, isExistIdBlogMiddleware } from "../../middleware/input-validation-middleware";
 import { blogQueryRepository } from "./repository/query-blogs-repository";
 import { blogsService } from "./service/blogs-service";
 import { postQueryRepository } from "../post/repository/query-posts-repository";
-import { getBlogParamsFromReq, getQueryFromReq, getQueryFromReqBlog } from "../../utils";
+import { getQueryFromReq, getQueryFromReqBlog } from "../../utils";
 import { postsService } from "../post/service/posts-service";
-import { CreatePostDto } from "../post/post.dto";
 import { checkPostRoute } from "../post/schema";
 
 export const blogsRoute = Router({});

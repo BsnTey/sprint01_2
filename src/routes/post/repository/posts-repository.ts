@@ -1,20 +1,20 @@
-import { DeleteResult, InsertOneResult, UpdateResult } from "mongodb";
+import { DeleteResult, InsertOneResult, ObjectId, UpdateResult } from "mongodb";
 import { postsCollections } from "../../../setting";
 import { PostDatabase } from "../../../types";
 
 export const postCqrsRepository = {
   async insertPost(post: Partial<PostDatabase>) {
     const result: InsertOneResult<PostDatabase> = await postsCollections.insertOne(post as PostDatabase);
-    return result.acknowledged;
+    return result.insertedId;
   },
 
   async updatePost(post: Partial<PostDatabase>) {
-    const result: UpdateResult<PostDatabase> = await postsCollections.updateOne({ id: post.id }, { $set: post });
+    const result: UpdateResult<PostDatabase> = await postsCollections.updateOne({ _id: new ObjectId(post.id) }, { $set: post });
     return result.matchedCount === 1;
   },
 
   async deletePost(id: string) {
-    const result: DeleteResult = await postsCollections.deleteOne({ id });
+    const result: DeleteResult = await postsCollections.deleteOne({ _id: new ObjectId(id) });
     return result.acknowledged;
   },
 

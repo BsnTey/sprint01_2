@@ -5,7 +5,6 @@ import { TypeSortAskDesk } from "../../../types";
 export const blogQueryRepository = {
   async findAllBlogs({ searchNameTerm = "", sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }) {
     const nameBlog = searchNameTerm ? { name: { $regex: new RegExp(searchNameTerm, "i") } } : {};
-    console.log("findAllBlogs", pageNumber, pageSize, searchNameTerm);
     const totalCount = await blogsCollections.countDocuments(nameBlog);
 
     const pagesCount = Math.ceil(totalCount / pageSize);

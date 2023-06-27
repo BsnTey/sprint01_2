@@ -30,6 +30,7 @@ export const postQueryRepository = {
 
   async findPostById(id: string) {
     const post = await postsCollections.findOne({ _id: new ObjectId(id) });
+
     if (post) {
       post.id = post._id.toString();
       delete (post as any)._id;

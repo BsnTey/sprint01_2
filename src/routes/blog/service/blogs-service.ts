@@ -7,7 +7,6 @@ import { blogQueryRepository } from "../repository/query-blogs-repository";
 export const blogsService = {
   async createBlog(bodyParams: CreateBlogDto): Promise<BlogDatabase | null> {
     const bodyParamsFilter = getBlogParamsFromReq(bodyParams);
-    console.log(bodyParamsFilter);
 
     const data = {
       ...bodyParamsFilter,
@@ -16,7 +15,6 @@ export const blogsService = {
     };
 
     const resId = await blogCqrsRepository.insertBlog(data);
-    console.log(resId);
     if (resId) return await blogQueryRepository.findBlogById(resId.toString());
     return null;
   },
@@ -24,6 +22,7 @@ export const blogsService = {
   async updateBlog(id: string, bodyParams: CreateBlogDto): Promise<boolean> {
     const filterParams = getBlogParamsFromReq(bodyParams);
     let data = await blogQueryRepository.findBlogById(id);
+
     if (!data) return false;
     data = {
       ...data,
