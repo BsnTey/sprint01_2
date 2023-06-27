@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { BlogDatabase, OutputGetAllResponse, PostDatabase, RequestBodyId, ResponseBody, QueryParamsWithTerm, RequestBodyBlogId, RequestBody } from "../../types";
 import { CreateBlogDto } from "./blog.dto";
-import { checkBlogRoute } from "./schema";
+import { checkBlogCreatePostRoute, checkBlogRoute } from "./schema";
 import { inputValidationMiddleware, isAuthMiddleware, isExistIdBlogMiddleware } from "../../middleware/input-validation-middleware";
 import { blogQueryRepository } from "./repository/query-blogs-repository";
 import { blogsService } from "./service/blogs-service";
@@ -26,12 +26,19 @@ blogsRoute.post("/", isAuthMiddleware, checkBlogRoute, inputValidationMiddleware
   return res.sendStatus(520);
 });
 
-blogsRoute.post("/:id/posts", isAuthMiddleware, isExistIdBlogMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBodyId<PostDatabase>, res: Response) => {
-  const item = await postsService.createPost(req.body);
+blogsRoute.post(
+  "/:id/posts",
+  isAuthMiddleware,
+  isExistIdBlogMiddleware,
+  checkBlogCreatePostRoute,
+  inputValidationMiddleware,
+  async (req: RequestBodyId<PostDatabase>, res: Response) => {
+    const item = await postsService.createPost(req.body);
 
-  if (item) return res.status(201).send(item);
-  return res.sendStatus(520);
-});
+    if (item) return res.status(201).send(item);
+    return res.sendStatus(520);
+  }
+);
 
 blogsRoute.get("/:id/posts", isExistIdBlogMiddleware, async (req: Request, res: ResponseBody<OutputGetAllResponse<PostDatabase>>) => {
   const idSearch = req.params.id;

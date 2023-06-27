@@ -24,15 +24,15 @@ export const checkPostRoute = checkSchema({
     trim: true,
     notEmpty: true,
     isString: true,
-    // custom: {
-    //   options: async (blogId, { req }) => {
-    //     const blog = await blogQueryRepository.findBlogById(blogId);
-    //     if (!blog) {
-    //       throw new Error("Blog does not exist");
-    //     }
-    //     req.body["blogId"] = blogId;
-    //     req.body["blogName"] = blog.name;
-    //   },
-    // },
+    custom: {
+      options: async (blogId, { req }) => {
+        const blog = await blogQueryRepository.findBlogById(blogId);
+        if (!blog) {
+          throw new Error("Blog does not exist");
+        }
+        req.body["blogId"] = blogId;
+        req.body["blogName"] = blog.name;
+      },
+    },
   },
 });
