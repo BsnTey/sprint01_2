@@ -3,6 +3,7 @@ import { NextFunction } from "express";
 import { validationResult } from "express-validator";
 import { blogQueryRepository } from "../routes/blog/repository/query-blogs-repository";
 import { postQueryRepository } from "../routes/post/repository/query-posts-repository";
+import { log } from "console";
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -39,6 +40,23 @@ export const isValidIdMiddleware = (req: Request, res: Response, next: NextFunct
   }
 };
 
+export const isExistIdBlogForPostMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const idBlog: string = req.body.blogId;
+  try {
+    const blog = await blogQueryRepository.findBlogById(idBlog);
+    if (!blog) {
+      res.sendStatus(404);
+      return;
+    }
+
+    req.body["blogId"] = blog.id;
+    req.body["blogName"] = blog.name;
+    next();
+  } catch (err) {
+    res.sendStatus(404);
+  }
+};
+
 export const isExistIdBlogMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const idBlog: string = req.params.id;
   if (!idBlog) {
@@ -50,6 +68,9 @@ export const isExistIdBlogMiddleware = async (req: Request, res: Response, next:
     res.sendStatus(404);
     return;
   }
+
+  req.body["blogId"] = blog.id;
+  req.body["blogName"] = blog.name;
   next();
 };
 
@@ -60,6 +81,7 @@ export const isExistIdPostMiddleware = async (req: Request, res: Response, next:
     return;
   }
   const post = await postQueryRepository.findPostById(idPost);
+  console.log("post", post);
   if (!post) {
     res.sendStatus(404);
     return;

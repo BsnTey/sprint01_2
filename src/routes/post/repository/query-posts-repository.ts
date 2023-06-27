@@ -5,19 +5,27 @@ import { QueryParamsWithId, TypeSortAskDesk } from "../../../types";
 export const postQueryRepository = {
   async findAllPosts({ blogId, sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }: Partial<QueryParamsWithId>) {
     const isBlogSearch: {} | { id: string } = blogId ? { blogId: { $eq: blogId } } : {};
-    console.log("findAllPosts", pageNumber, pageSize, isBlogSearch);
     const totalCount = await postsCollections.countDocuments(isBlogSearch);
 
     const pagesCount = Math.ceil(totalCount / pageSize);
 
-    const items = await postsCollections
-      .find(isBlogSearch, { projection: { _id: 0 } })
+    let items = await postsCollections
+      .find(isBlogSearch)
       .sort({
         [sortBy]: TypeSortAskDesk[sortDirection],
       })
       .skip((+pageNumber - 1) * +pageSize)
       .limit(+pageSize)
       .toArray();
+
+    items = items.map((item) => {
+      const id = item._id.toString();
+      delete (item as any)._id;
+      return {
+        ...item,
+        id,
+      };
+    });
 
     return {
       pagesCount,

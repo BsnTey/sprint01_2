@@ -2,7 +2,13 @@ import { Router, Request, Response } from "express";
 import { OutputGetAllResponse, PostDatabase, QueryParams, RequestBody, RequestBodyId, ResponseBody } from "../../types";
 import { checkPostRoute } from "./schema";
 import { postsService } from "./service/posts-service";
-import { inputValidationMiddleware, isAuthMiddleware, isExistIdPostMiddleware, isValidIdMiddleware } from "../../middleware/input-validation-middleware";
+import {
+  inputValidationMiddleware,
+  isAuthMiddleware,
+  isExistIdBlogForPostMiddleware,
+  isExistIdPostMiddleware,
+  isValidIdMiddleware,
+} from "../../middleware/input-validation-middleware";
 import { postQueryRepository } from "./repository/query-posts-repository";
 import { getQueryFromReq } from "../../utils";
 
@@ -14,11 +20,18 @@ postsRoute.get("/", async (req: Request, res: ResponseBody<OutputGetAllResponse<
   return res.json(data);
 });
 
-postsRoute.post("/", isAuthMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBody<PostDatabase>, res: ResponseBody<PostDatabase>) => {
-  const item = await postsService.createPost(req.body);
-  if (item) return res.status(201).send(item);
-  return res.sendStatus(520);
-});
+postsRoute.post(
+  "/",
+  isAuthMiddleware,
+  checkPostRoute,
+  isExistIdBlogForPostMiddleware,
+  inputValidationMiddleware,
+  async (req: RequestBody<PostDatabase>, res: ResponseBody<PostDatabase>) => {
+    const item = await postsService.createPost(req.body);
+    if (item) return res.status(201).send(item);
+    return res.sendStatus(520);
+  }
+);
 
 postsRoute.get("/:id", isValidIdMiddleware, async (req: Request, res: ResponseBody<PostDatabase>) => {
   const idSearch = req.params.id;

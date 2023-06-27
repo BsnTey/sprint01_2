@@ -26,7 +26,7 @@ blogsRoute.post("/", isAuthMiddleware, checkBlogRoute, inputValidationMiddleware
   return res.sendStatus(520);
 });
 
-blogsRoute.post("/:blogId/posts", isAuthMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBodyBlogId<PostDatabase>, res: Response) => {
+blogsRoute.post("/:id/posts", isAuthMiddleware, isExistIdBlogMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBodyId<PostDatabase>, res: Response) => {
   const item = await postsService.createPost(req.body);
 
   if (item) return res.status(201).send(item);

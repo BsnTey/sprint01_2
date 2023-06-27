@@ -9,14 +9,24 @@ export const blogQueryRepository = {
 
     const pagesCount = Math.ceil(totalCount / pageSize);
 
-    const items = await blogsCollections
-      .find(nameBlog, { projection: { _id: 0 } })
+    let items = await blogsCollections
+      .find(nameBlog)
       .sort({
         [sortBy]: TypeSortAskDesk[sortDirection],
       })
       .skip((+pageNumber - 1) * +pageSize)
       .limit(+pageSize)
       .toArray();
+
+    items = items.map((item) => {
+      const id = item._id.toString();
+      delete (item as any)._id;
+
+      return {
+        ...item,
+        id,
+      };
+    });
 
     return {
       pagesCount,
