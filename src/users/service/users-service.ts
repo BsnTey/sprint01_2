@@ -2,7 +2,7 @@ import { UserDatabaseOutput } from "../../types";
 import { CreateUserDto } from "../users.dto";
 import { generateHash } from "../../utils";
 import { userCqrsRepository } from "../repository/users-repository";
-import { userQueryRepository } from "../service/query-users-repository";
+import { userQueryRepository } from "../repository/query-users-repository";
 import * as bcrypt from "bcrypt";
 
 export const usersService = {
@@ -31,5 +31,8 @@ export const usersService = {
       };
     }
     return null;
+  },
+  async deleteUser(id: string): Promise<boolean> {
+    return await userCqrsRepository.deleteUser(id);
   },
 };

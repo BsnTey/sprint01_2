@@ -3,6 +3,7 @@ import { NextFunction } from "express";
 import { validationResult } from "express-validator";
 import { blogQueryRepository } from "../routes/blog/repository/query-blogs-repository";
 import { postQueryRepository } from "../routes/post/repository/query-posts-repository";
+import { userQueryRepository } from "../users/repository/query-users-repository";
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -39,12 +40,12 @@ export const isValidIdMiddleware = (req: Request, res: Response, next: NextFunct
   }
 };
 export const isExistIdBlogMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const idBlog: string = req.params.id;
-  if (!idBlog) {
+  const blogId: string = req.params.id;
+  if (!blogId) {
     res.sendStatus(400);
     return;
   }
-  const blog = await blogQueryRepository.findBlogById(idBlog);
+  const blog = await blogQueryRepository.findBlogById(blogId);
   if (!blog) {
     res.sendStatus(404);
     return;
@@ -56,16 +57,31 @@ export const isExistIdBlogMiddleware = async (req: Request, res: Response, next:
 };
 
 export const isExistIdPostMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const idPost: string = req.params.id;
-  if (!idPost) {
+  const postId: string = req.params.id;
+  if (!postId) {
     res.sendStatus(400);
     return;
   }
-  const post = await postQueryRepository.findPostById(idPost);
+  const post = await postQueryRepository.findPostById(postId);
   if (!post) {
     res.sendStatus(404);
     return;
   }
   req.body["id"] = post.id;
+  next();
+};
+
+export const isExistIdUserMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const userId: string = req.params.id;
+  if (!userId) {
+    res.sendStatus(400);
+    return;
+  }
+  const user = await userQueryRepository.findUserById(userId);
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
+  req.body["id"] = userId;
   next();
 };

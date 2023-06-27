@@ -13,13 +13,13 @@ export const userCqrsRepository = {
   //   return result.matchedCount === 1;
   // },
 
-  // async deleteBlog(id: string) {
-  //   const result: DeleteResult = await blogsCollections.deleteOne({ _id: new ObjectId(id) });
-  //   return result.acknowledged;
-  // },
+  async deleteUser(id: string) {
+    const result: DeleteResult = await usersCollections.deleteOne({ _id: new ObjectId(id) });
+    return result.acknowledged;
+  },
 
-  // async deleteAll() {
-  //   const result: DeleteResult = await blogsCollections.deleteMany({});
-  //   return result.acknowledged;
-  // },
+  async deleteAll() {
+    const result: DeleteResult = await usersCollections.deleteMany({});
+    return result.acknowledged;
+  },
 };

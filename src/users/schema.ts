@@ -21,7 +21,7 @@ export const checkUserRoute = checkSchema({
     notEmpty: true,
     isString: true,
     matches: {
-      options: "^[w-.]+@([w-]+.)+[w-]{2,4}$",
+      options: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/i,
     },
   },
 });

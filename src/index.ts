@@ -4,6 +4,7 @@ import { postCqrsRepository } from "./routes/post/repository/posts-repository";
 import { blogCqrsRepository } from "./routes/blog/repository/blogs-repository";
 
 import { port } from "./constant";
+import { userCqrsRepository } from "./users/repository/users-repository";
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
@@ -16,5 +17,6 @@ app.get("/", (req: Request, res: Response) => {
 app.delete("/testing/all-data", (req: Request, res: Response) => {
   postCqrsRepository.deleteAll();
   blogCqrsRepository.deleteAll();
+  userCqrsRepository.deleteAll();
   res.sendStatus(204);
 });

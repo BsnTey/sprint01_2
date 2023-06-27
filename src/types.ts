@@ -60,6 +60,10 @@ export type QueryParams = {
 
 export type QueryParamsWithId = QueryParams & { blogId: string };
 export type QueryParamsWithTerm = QueryParams & { searchNameTerm?: string };
+export type QueryParamsWithLogEmail = QueryParams & {
+  searchLoginTerm?: string;
+  searchEmailTerm?: string;
+};
 
 export const TypeSortAskDesk: {
   [key: string]: SortDirection;
