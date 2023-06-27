@@ -39,3 +39,14 @@ export const getPostsParamsFromReq = (obj: PostDatabase) => {
     content: obj.content,
   };
 };
+
+export const getUpdatePostsParamsFromReq = (obj: PostDatabase) => {
+  return {
+    id: obj.id,
+    blogId: obj.blogId,
+    blogName: obj.blogName,
+    title: obj.title,
+    shortDescription: obj.shortDescription,
+    content: obj.content,
+  };
+};

@@ -1,5 +1,5 @@
 import { PostDatabase } from "../../../types";
-import { getPostsParamsFromReq } from "../../../utils";
+import { getPostsParamsFromReq, getUpdatePostsParamsFromReq } from "../../../utils";
 import { CreatePostDto } from "../post.dto";
 import { postCqrsRepository } from "../repository/posts-repository";
 import { postQueryRepository } from "../repository/query-posts-repository";
@@ -19,7 +19,7 @@ export const postsService = {
   },
 
   async updatePost(bodyParams: PostDatabase): Promise<boolean> {
-    const filterParams = getPostsParamsFromReq(bodyParams);
+    const filterParams = getUpdatePostsParamsFromReq(bodyParams);
     return await postCqrsRepository.updatePost(filterParams);
   },
 

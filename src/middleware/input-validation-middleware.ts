@@ -81,10 +81,10 @@ export const isExistIdPostMiddleware = async (req: Request, res: Response, next:
     return;
   }
   const post = await postQueryRepository.findPostById(idPost);
-  console.log("post", post);
   if (!post) {
     res.sendStatus(404);
     return;
   }
+  req.body["id"] = post.id;
   next();
 };
