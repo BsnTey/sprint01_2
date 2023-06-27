@@ -1,6 +1,5 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { uri_mongo } from "../constant";
-import { BlogDatabase, PostDatabase } from "../types";
 
 if (!uri_mongo) {
   throw new Error(`Invalid URI`);

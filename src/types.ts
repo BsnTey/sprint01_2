@@ -35,6 +35,22 @@ export interface PostDatabase {
   createdAt: string;
 }
 
+export interface UserDatabase {
+  _id: ObjectId;
+  login: string;
+  email: string;
+  passwordHash: string;
+  passwordSalt: string;
+  createdAt: string;
+}
+
+export interface UserDatabaseOutput {
+  id: string;
+  login: string;
+  email: string;
+  createdAt: string;
+}
+
 export type QueryParams = {
   sortBy?: string;
   sortDirection?: string;

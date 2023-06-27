@@ -8,7 +8,6 @@ import { blogsService } from "./service/blogs-service";
 import { postQueryRepository } from "../post/repository/query-posts-repository";
 import { getQueryFromReq, getQueryFromReqBlog } from "../../utils";
 import { postsService } from "../post/service/posts-service";
-import { checkPostRoute } from "../post/schema";
 
 export const blogsRoute = Router({});
 
@@ -51,10 +50,9 @@ blogsRoute.get("/:id/posts", isExistIdBlogMiddleware, async (req: Request, res: 
 });
 
 blogsRoute.get("/:id", isExistIdBlogMiddleware, async (req: Request, res: Response) => {
-  const data = await blogQueryRepository.findBlogById(req.params.id);
-
-  if (!data) return res.sendStatus(404);
-  return res.status(200).send(data);
+  const findBlog = await blogQueryRepository.findBlogById(req.params.id);
+  if (!findBlog) return res.sendStatus(404);
+  return res.status(200).send(findBlog);
 });
 
 blogsRoute.put("/:id", isAuthMiddleware, isExistIdBlogMiddleware, checkBlogRoute, inputValidationMiddleware, async (req: RequestBodyId<CreateBlogDto>, res: Response) => {

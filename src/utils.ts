@@ -1,14 +1,5 @@
-import { CreateBlogDto } from "./routes/blog/blog.dto";
-import { CreatePostDto } from "./routes/post/post.dto";
-import { PostDatabase, QueryParams, QueryParamsWithTerm } from "./types";
-
-export const getBlogParamsFromReq = (obj: CreateBlogDto) => {
-  return {
-    name: obj.name,
-    description: obj.description,
-    websiteUrl: obj.websiteUrl,
-  };
-};
+import { QueryParams, QueryParamsWithTerm } from "./types";
+import * as bcrypt from "bcrypt";
 
 export const getQueryFromReq = (obj: QueryParams, id?: string) => {
   return {
@@ -30,23 +21,6 @@ export const getQueryFromReqBlog = (obj: QueryParamsWithTerm) => {
   };
 };
 
-export const getPostsParamsFromReq = (obj: PostDatabase) => {
-  return {
-    blogId: obj.blogId,
-    blogName: obj.blogName,
-    title: obj.title,
-    shortDescription: obj.shortDescription,
-    content: obj.content,
-  };
-};
-
-export const getUpdatePostsParamsFromReq = (obj: PostDatabase) => {
-  return {
-    id: obj.id,
-    blogId: obj.blogId,
-    blogName: obj.blogName,
-    title: obj.title,
-    shortDescription: obj.shortDescription,
-    content: obj.content,
-  };
+export const generateHash = async (password: string, passwordSalt: string): Promise<string> => {
+  return await bcrypt.hash(password, passwordSalt);
 };

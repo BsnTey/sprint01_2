@@ -30,14 +30,12 @@ postsRoute.get("/:id", isValidIdMiddleware, async (req: Request, res: ResponseBo
 
 postsRoute.put("/:id", isAuthMiddleware, isExistIdPostMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBodyId<PostDatabase>, res: Response) => {
   const result = await postsService.updatePost(req.body);
-  console.log("result", result);
   const status = result ? 204 : 404;
   return res.sendStatus(status);
 });
 
 postsRoute.delete("/:id", isAuthMiddleware, isExistIdPostMiddleware, async (req: Request, res: Response) => {
   const result = await postsService.deletePost(req.params.id);
-
   const status = result ? 204 : 404;
   return res.sendStatus(status);
 });
