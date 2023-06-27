@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ObjectId, SortDirection } from "mongodb";
 
 export type RequestBody<T> = Request<{}, {}, T>;
+export type RequestBodyBlogId<T> = Request<{ blogId: string }, {}, T>;
 export type RequestBodyId<T> = Request<{ id: string }, {}, T>;
 export type ResponseBody<T> = Response<T>;
 

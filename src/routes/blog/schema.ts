@@ -1,4 +1,5 @@
 import { checkSchema } from "express-validator";
+import { blogQueryRepository } from "./repository/query-blogs-repository";
 
 export const checkBlogRoute = checkSchema({
   name: {

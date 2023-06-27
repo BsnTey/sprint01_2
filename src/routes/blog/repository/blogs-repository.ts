@@ -5,7 +5,7 @@ import { BlogDatabase } from "../../../types";
 export const blogCqrsRepository = {
   async insertBlog(blog: Partial<BlogDatabase>) {
     const result: InsertOneResult<BlogDatabase> = await blogsCollections.insertOne(blog as BlogDatabase);
-    return result.acknowledged;
+    return result.insertedId;
   },
 
   async updateBlog(blog: Partial<BlogDatabase>) {

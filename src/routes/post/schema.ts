@@ -1,4 +1,5 @@
 import { checkSchema } from "express-validator";
+import { blogQueryRepository } from "../blog/repository/query-blogs-repository";
 
 export const checkPostRoute = checkSchema({
   title: {
@@ -22,7 +23,16 @@ export const checkPostRoute = checkSchema({
   blogId: {
     trim: true,
     notEmpty: true,
-    // не верно в swagger. это число
-    isNumeric: true,
+    isString: true,
+    custom: {
+      options: async (blogId, { req }) => {
+        const blog = await blogQueryRepository.findBlogById(blogId);
+        if (!blog) {
+          throw new Error("Blog does not exist");
+        }
+        req.body["blogId"] = blogId;
+        req.body["blogName"] = blog.name;
+      },
+    },
   },
 });

@@ -1,6 +1,6 @@
 import { CreateBlogDto } from "./routes/blog/blog.dto";
 import { CreatePostDto } from "./routes/post/post.dto";
-import { QueryParams, QueryParamsWithTerm } from "./types";
+import { PostDatabase, QueryParams, QueryParamsWithTerm } from "./types";
 
 export const getBlogParamsFromReq = (obj: CreateBlogDto) => {
   return {
@@ -30,11 +30,10 @@ export const getQueryFromReqBlog = (obj: QueryParamsWithTerm) => {
   };
 };
 
-export const getPostsParamsFromReq = (id: string, obj: CreatePostDto, blogName: string) => {
+export const getPostsParamsFromReq = (obj: PostDatabase) => {
   return {
-    id,
     blogId: obj.blogId,
-    blogName,
+    blogName: obj.blogName,
     title: obj.title,
     shortDescription: obj.shortDescription,
     content: obj.content,

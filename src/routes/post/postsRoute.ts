@@ -1,13 +1,10 @@
 import { Router, Request, Response } from "express";
 import { OutputGetAllResponse, PostDatabase, QueryParams, RequestBody, RequestBodyId, ResponseBody } from "../../types";
-import { CreatePostDto } from "./post.dto";
 import { checkPostRoute } from "./schema";
 import { postsService } from "./service/posts-service";
-
-import { inputValidationMiddleware, isAuthMiddleware, isValidIdMiddleware } from "../../middleware/input-validation-middleware";
+import { inputValidationMiddleware, isAuthMiddleware, isExistIdPostMiddleware, isValidIdMiddleware } from "../../middleware/input-validation-middleware";
 import { postQueryRepository } from "./repository/query-posts-repository";
-import { getPostsParamsFromReq, getQueryFromReq } from "../../utils";
-import { blogQueryRepository } from "../blog/repository/query-blogs-repository";
+import { getQueryFromReq } from "../../utils";
 
 export const postsRoute = Router({});
 
@@ -17,11 +14,8 @@ postsRoute.get("/", async (req: Request, res: ResponseBody<OutputGetAllResponse<
   return res.json(data);
 });
 
-postsRoute.post("/", isAuthMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBody<CreatePostDto>, res: ResponseBody<PostDatabase>) => {
-  const isExcistBlog = await blogQueryRepository.findBlogById(req.body.blogId);
-  if (!isExcistBlog) return res.sendStatus(404);
-
-  const item = await postsService.createPost(req.body, isExcistBlog.name);
+postsRoute.post("/", isAuthMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBody<PostDatabase>, res: ResponseBody<PostDatabase>) => {
+  const item = await postsService.createPost(req.body);
   if (item) return res.status(201).send(item);
   return res.sendStatus(520);
 });
@@ -29,35 +23,19 @@ postsRoute.post("/", isAuthMiddleware, checkPostRoute, inputValidationMiddleware
 postsRoute.get("/:id", isValidIdMiddleware, async (req: Request, res: ResponseBody<PostDatabase>) => {
   const idSearch = req.params.id;
 
-  const isExcistPost = await postQueryRepository.findPostById(idSearch);
-  if (!isExcistPost) return res.sendStatus(404);
-  return res.status(200).send(isExcistPost);
+  const post = await postQueryRepository.findPostById(idSearch);
+  if (!post) return res.sendStatus(404);
+  return res.status(200).send(post);
 });
 
-postsRoute.put("/:id", isAuthMiddleware, isValidIdMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBodyId<CreatePostDto>, res: Response) => {
-  const idSearch = req.params.id;
-  let blogId = req.body.blogId;
-
-  const isExcistPost = await postQueryRepository.findPostById(idSearch);
-  if (!isExcistPost) return res.sendStatus(404);
-
-  let blogName = isExcistPost.blogName;
-
-  // зачем тогда мы прислылаем в теле blogId, если его нельзя изменить? если можно, то берем новый
-  if (isExcistPost.blogId !== blogId) {
-    const isExcistBlog = await blogQueryRepository.findBlogById(blogId);
-    if (!isExcistBlog) return res.sendStatus(404);
-    blogName = isExcistBlog.name;
-  }
-
-  const result = await postsService.updatePost(idSearch, req.body, blogName);
+postsRoute.put("/:id", isAuthMiddleware, isExistIdPostMiddleware, checkPostRoute, inputValidationMiddleware, async (req: RequestBodyId<PostDatabase>, res: Response) => {
+  const result = await postsService.updatePost(req.body);
   const status = result ? 204 : 404;
   return res.sendStatus(status);
 });
 
-postsRoute.delete("/:id", isAuthMiddleware, isValidIdMiddleware, async (req: Request, res: Response) => {
-  const idParams = req.params.id;
-  const result = await postsService.deletePost(idParams);
+postsRoute.delete("/:id", isAuthMiddleware, isExistIdPostMiddleware, async (req: Request, res: Response) => {
+  const result = await postsService.deletePost(req.params.id);
   const status = result ? 204 : 404;
   return res.sendStatus(status);
 });

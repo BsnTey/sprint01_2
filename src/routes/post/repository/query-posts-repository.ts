@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { postsCollections } from "../../../setting";
 import { QueryParamsWithId, TypeSortAskDesk } from "../../../types";
 
@@ -28,6 +29,11 @@ export const postQueryRepository = {
   },
 
   async findPostById(id: string) {
-    return await postsCollections.findOne({ id: { $eq: id } }, { projection: { _id: 0 } });
+    const post = await postsCollections.findOne({ _id: new ObjectId(id) });
+    if (post) {
+      post.id = post._id.toString();
+      delete (post as any)._id;
+    }
+    return post;
   },
 };
