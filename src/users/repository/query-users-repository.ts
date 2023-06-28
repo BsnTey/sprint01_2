@@ -4,10 +4,12 @@ import { TypeSortAskDesk } from "../../types";
 
 export const userQueryRepository = {
   async findAllUsers({ searchLoginTerm = "", searchEmailTerm = "", sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }) {
-    const searchLogin = searchLoginTerm ? { login: { $regex: new RegExp(searchLoginTerm, "i") } } : {};
-    const searchEmail = searchEmailTerm ? { email: { $regex: new RegExp(searchEmailTerm, "i") } } : {};
+    // const searchLogin = searchLoginTerm ? { login: { $regex: new RegExp(searchLoginTerm, "i") } } : {};
+    // const searchEmail = searchEmailTerm ? { email: { $regex: new RegExp(searchEmailTerm, "i") } } : {};
 
-    const filter = { ...searchLogin, ...searchEmail };
+    const filter = {
+      $or: [{ login: { $regex: new RegExp(searchLoginTerm, "i") } }, { email: { $regex: new RegExp(searchEmailTerm, "i") } }],
+    };
 
     const totalCount = await usersCollections.countDocuments(filter);
 
