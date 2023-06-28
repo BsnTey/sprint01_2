@@ -7,7 +7,7 @@ export const checkUserRoute = checkSchema({
     isString: true,
     isLength: { options: { min: 3, max: 30 } },
     matches: {
-      options: "^[a-zA-Z0-9_-]*$",
+      options: [/^(?=.*[a-z])[a-zA-Z0-9_]*$/],
     },
   },
   password: {

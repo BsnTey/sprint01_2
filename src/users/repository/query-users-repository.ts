@@ -37,7 +37,7 @@ export const userQueryRepository = {
       page: pageNumber,
       pageSize,
       totalCount,
-      filterItems,
+      items: filterItems,
     };
   },
 
