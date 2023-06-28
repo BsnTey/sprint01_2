@@ -1,10 +1,11 @@
 import { Router, Request, Response } from "express";
 import { checkAuthRoute } from "./schema";
 import { authService } from "./service/auth-service";
+import { inputValidationMiddleware } from "../middleware/input-validation-middleware";
 
 export const authRoute = Router({});
 
-authRoute.post("/login", checkAuthRoute, async (req: Request, res: Response) => {
+authRoute.post("/login", checkAuthRoute, inputValidationMiddleware, async (req: Request, res: Response) => {
   const loginOrPass = req.body.loginOrEmail;
   const password = req.body.password;
   const auth = await authService.loginUser(loginOrPass, password);
