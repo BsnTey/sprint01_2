@@ -6,4 +6,5 @@ export interface CreateCommentDto {
 
 export interface CreateCommentImplUser extends CreateCommentDto {
   user: UserDatabase;
+  postId: string;
 }

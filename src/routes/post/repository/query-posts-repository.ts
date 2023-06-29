@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
-import { postsCollections } from "../../../setting";
-import { QueryParamsWithId, TypeSortAskDesk } from "../../../types";
+import { commentsCollections, postsCollections } from "../../../setting";
+import { QueryParamsPostWithId, QueryParamsWithId, TypeSortAskDesk } from "../../../types";
 
 export const postQueryRepository = {
   async findAllPosts({ blogId, sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }: Partial<QueryParamsWithId>) {
@@ -33,6 +33,41 @@ export const postQueryRepository = {
       pageSize,
       totalCount,
       items,
+    };
+  },
+
+  async findAllComments({ postId, sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }: Partial<QueryParamsPostWithId>) {
+    const isPostSearch: {} | { id: string } = postId ? { postId: { $eq: postId } } : {};
+    const totalCount = await commentsCollections.countDocuments(isPostSearch);
+
+    const pagesCount = Math.ceil(totalCount / pageSize);
+
+    const items = await commentsCollections
+      .find(isPostSearch)
+      .sort({
+        [sortBy]: TypeSortAskDesk[sortDirection],
+      })
+      .skip((+pageNumber - 1) * +pageSize)
+      .limit(+pageSize)
+      .toArray();
+
+    const newItems = items.map((item) => {
+      return {
+        id: item._id.toString(),
+        commentatorInfo: {
+          userId: item.commentatorInfo.userId,
+          userLogin: item.commentatorInfo.userLogin,
+        },
+        createdAt: item.createdAt,
+      };
+    });
+
+    return {
+      pagesCount,
+      page: pageNumber,
+      pageSize,
+      totalCount,
+      items: newItems,
     };
   },
 

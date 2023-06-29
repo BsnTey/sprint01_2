@@ -1,16 +1,9 @@
 import { Router, Request, Response } from "express";
 import { authBearerMiddleware, inputValidationMiddleware, isCommentOwnerMiddleware, isExistIdCommentMiddleware } from "../../middleware/input-validation-middleware";
 import { commentsService } from "./service/comments-service";
-import { commentQueryRepository } from "./repository/query-comments-repository";
 import { checkCommentRoute } from "./schema";
 
 export const commentRoute = Router({});
-
-commentRoute.post("/", authBearerMiddleware, checkCommentRoute, inputValidationMiddleware, async (req: Request, res: Response) => {
-  const comment = await commentsService.createComment(req.body);
-  if (comment) return res.status(201).send(comment);
-  return res.sendStatus(520);
-});
 
 commentRoute.get("/:id", isExistIdCommentMiddleware, async (req: Request, res: Response) => {
   const findComment = req.body.comment;

@@ -9,7 +9,7 @@ authRoute.post("/login", checkAuthRoute, inputValidationMiddleware, async (req: 
   const loginOrPass = req.body.loginOrEmail;
   const password = req.body.password;
   const resAuth = await authService.loginUser(loginOrPass, password);
-  if (resAuth) return res.status(201).json(resAuth);
+  if (resAuth) return res.status(200).json(resAuth);
   return res.sendStatus(401);
 });
 

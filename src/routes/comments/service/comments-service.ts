@@ -5,6 +5,7 @@ import { commentQueryRepository } from "../repository/query-comments-repository"
 export const commentsService = {
   async createComment(bodyParams: CreateCommentImplUser) {
     const comment = {
+      postId: bodyParams.postId,
       content: bodyParams.content,
       commentatorInfo: {
         userId: bodyParams.user._id.toString(),

@@ -37,6 +37,7 @@ export const authBearerMiddleware = async (req: Request, res: Response, next: Ne
   if (!authHeader) return res.sendStatus(401);
   const token = authHeader.split(" ")[1];
   const userId = await jwtService.getUserByToken(token);
+
   if (!userId) return res.sendStatus(401);
 
   const user = await userQueryRepository.findUserById(userId);
@@ -81,13 +82,18 @@ export const isExistIdPostMiddleware = async (req: Request, res: Response, next:
     res.sendStatus(400);
     return;
   }
-  const post = await postQueryRepository.findPostById(postId);
-  if (!post) {
+  try {
+    const post = await postQueryRepository.findPostById(postId);
+    if (!post) {
+      res.sendStatus(404);
+      return;
+    }
+    req.body["postId"] = post.id;
+    next();
+  } catch (error) {
     res.sendStatus(404);
     return;
   }
-  req.body["id"] = post.id;
-  next();
 };
 
 export const isExistIdUserMiddleware = async (req: Request, res: Response, next: NextFunction) => {

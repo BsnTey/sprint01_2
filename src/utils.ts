@@ -1,14 +1,21 @@
-import { QueryParams, QueryParamsWithLogEmail, QueryParamsWithTerm } from "./types";
+import { QueryParams, QueryParamsWithLogEmail, QueryParamsWithTerm, QueryTypeId } from "./types";
 import * as bcrypt from "bcrypt";
 
-export const getQueryFromReq = (obj: QueryParams, id?: string) => {
-  return {
-    ...(id && { blogId: id }),
+export const getQueryFromReq = (obj: QueryParams, idType?: QueryTypeId) => {
+  const query: { [key: string]: string | number | undefined } = {
     ...(obj.sortBy && { sortBy: obj.sortBy }),
     ...(obj.sortDirection && { sortDirection: obj.sortDirection }),
     ...(obj.pageNumber && { pageNumber: Number(obj.pageNumber) }),
     ...(obj.pageSize && { pageSize: Number(obj.pageSize) }),
   };
+
+  if (idType) {
+    Object.keys(idType).forEach((key) => {
+      query[key] = idType[key];
+    });
+  }
+
+  return query;
 };
 
 export const getQueryFromReqBlog = (obj: QueryParamsWithTerm) => {

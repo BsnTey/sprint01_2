@@ -47,6 +47,7 @@ export const commentQueryRepository = {
     if (comment) {
       filterComment = {
         id: comment._id.toString(),
+        // postId: comment.postId,
         content: comment.content,
         commentatorInfo: {
           userId: comment.commentatorInfo.userId,

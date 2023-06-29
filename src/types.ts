@@ -46,6 +46,7 @@ export interface UserDatabase {
 
 export interface CommentDatabase {
   _id: ObjectId;
+  postId: string;
   content: string;
   commentatorInfo: {
     userId: string;
@@ -79,6 +80,7 @@ export type QueryParams = {
 };
 
 export type QueryParamsWithId = QueryParams & { blogId: string };
+export type QueryParamsPostWithId = QueryParams & { postId: string };
 export type QueryParamsWithTerm = QueryParams & { searchNameTerm?: string };
 export type QueryParamsWithLogEmail = QueryParams & {
   searchLoginTerm?: string;
@@ -94,4 +96,8 @@ export const TypeSortAskDesk: {
 
 export type ResultJwtCreate = {
   accessToken: string;
+};
+
+export type QueryTypeId = {
+  [key: string]: string;
 };
