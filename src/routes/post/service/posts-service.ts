@@ -18,16 +18,16 @@ export const postsService = {
     return null;
   },
 
-  async updatePost(bodyParams: PostDatabase): Promise<boolean> {
+  async updatePost(bodyParams: any): Promise<boolean> {
     const post = {
-      id: bodyParams.id,
       blogId: bodyParams.blogId,
       blogName: bodyParams.blogName,
       title: bodyParams.title,
       shortDescription: bodyParams.shortDescription,
       content: bodyParams.content,
     };
-    return await postCqrsRepository.updatePost(post);
+
+    return await postCqrsRepository.updatePost(bodyParams.postId, post);
   },
 
   async deletePost(id: string): Promise<boolean> {

@@ -54,6 +54,7 @@ export const postQueryRepository = {
     const newItems = items.map((item) => {
       return {
         id: item._id.toString(),
+        content: item.content,
         commentatorInfo: {
           userId: item.commentatorInfo.userId,
           userLogin: item.commentatorInfo.userLogin,

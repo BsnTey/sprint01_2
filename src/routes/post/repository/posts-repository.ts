@@ -8,8 +8,8 @@ export const postCqrsRepository = {
     return result.insertedId;
   },
 
-  async updatePost(post: Partial<PostDatabase>) {
-    const result: UpdateResult<PostDatabase> = await postsCollections.updateOne({ _id: new ObjectId(post.id) }, { $set: post });
+  async updatePost(id: string, post: Partial<PostDatabase>) {
+    const result: UpdateResult<PostDatabase> = await postsCollections.updateOne({ _id: new ObjectId(id) }, { $set: post });
     return result.matchedCount === 1;
   },
 
