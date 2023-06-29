@@ -18,7 +18,7 @@ commentRoute.put(
   checkCommentRoute,
   inputValidationMiddleware,
   async (req: Request, res: Response) => {
-    const result = await commentsService.updateComment(req.params.id, req.body.comment.content);
+    const result = await commentsService.updateComment(req.params.id, req.body.content);
     const status = result ? 204 : 404;
     return res.sendStatus(status);
   }

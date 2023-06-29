@@ -41,7 +41,7 @@ blogsRoute.post(
 
 blogsRoute.get("/:id/posts", isExistIdBlogMiddleware, async (req: Request, res: ResponseBody<OutputGetAllResponse<PostDatabase>>) => {
   const idSearch = req.params.id;
-  const queryParams: any = getQueryFromReq(req.query, { idBlog: idSearch });
+  const queryParams: any = getQueryFromReq(req.query, { blogId: idSearch });
 
   const data = await postQueryRepository.findAllPosts(queryParams);
 

@@ -5,6 +5,7 @@ import { QueryParamsPostWithId, QueryParamsWithId, TypeSortAskDesk } from "../..
 export const postQueryRepository = {
   async findAllPosts({ blogId, sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }: Partial<QueryParamsWithId>) {
     const isBlogSearch: {} | { id: string } = blogId ? { blogId: { $eq: blogId } } : {};
+
     const totalCount = await postsCollections.countDocuments(isBlogSearch);
 
     const pagesCount = Math.ceil(totalCount / pageSize);

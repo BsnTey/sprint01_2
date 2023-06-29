@@ -34,12 +34,12 @@ export const isAuthMiddleware = (req: Request, res: Response, next: NextFunction
 
 export const authBearerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader: string | undefined = req.headers.authorization;
+
   if (!authHeader) return res.sendStatus(401);
   const token = authHeader.split(" ")[1];
   const userId = await jwtService.getUserByToken(token);
 
   if (!userId) return res.sendStatus(401);
-
   const user = await userQueryRepository.findUserById(userId);
   if (!user) {
     res.sendStatus(404);
@@ -84,6 +84,7 @@ export const isExistIdPostMiddleware = async (req: Request, res: Response, next:
   }
   try {
     const post = await postQueryRepository.findPostById(postId);
+
     if (!post) {
       res.sendStatus(404);
       return;
