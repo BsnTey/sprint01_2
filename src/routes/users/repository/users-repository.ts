@@ -1,6 +1,6 @@
 import { DeleteResult, InsertOneResult, ObjectId, UpdateResult } from "mongodb";
-import { usersCollections } from "../../setting";
-import { UserDatabase } from "../../types";
+import { usersCollections } from "../../../setting";
+import { UserDatabase } from "../../../types";
 
 export const userCqrsRepository = {
   async insertUser(user: Partial<UserDatabase>) {

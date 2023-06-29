@@ -3,7 +3,9 @@ import { NextFunction } from "express";
 import { validationResult } from "express-validator";
 import { blogQueryRepository } from "../routes/blog/repository/query-blogs-repository";
 import { postQueryRepository } from "../routes/post/repository/query-posts-repository";
-import { userQueryRepository } from "../users/repository/query-users-repository";
+import { userQueryRepository } from "../routes/users/repository/query-users-repository";
+import { jwtService } from "../application/jwtService";
+import { commentQueryRepository } from "../routes/comments/repository/query-comments-repository";
 
 export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -28,6 +30,23 @@ export const isAuthMiddleware = (req: Request, res: Response, next: NextFunction
   } else {
     next();
   }
+};
+
+export const authBearerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const authHeader: string | undefined = req.headers.authorization;
+  if (!authHeader) return res.sendStatus(401);
+  const token = authHeader.split(" ")[1];
+  const userId = await jwtService.getUserByToken(token);
+  if (!userId) return res.sendStatus(401);
+
+  const user = await userQueryRepository.findUserById(userId);
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
+  //зачем то записываем всего юзера?
+  req.body["user"] = user;
+  next();
 };
 
 export const isValidIdMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -83,5 +102,23 @@ export const isExistIdUserMiddleware = async (req: Request, res: Response, next:
     return;
   }
   req.body["id"] = userId;
+  next();
+};
+
+export const isExistIdCommentMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const commentId: string = req.params.id;
+  if (!commentId) return res.sendStatus(400);
+
+  const comment = await commentQueryRepository.findCommentById(commentId);
+  if (!comment) return res.sendStatus(404);
+
+  req.body["comment"] = comment;
+  next();
+};
+
+export const isCommentOwnerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.body.user._id.toString();
+  const userIdComment = req.body.comment.commentatorInfo.userId;
+  if (userId !== userIdComment) return res.sendStatus(403);
   next();
 };

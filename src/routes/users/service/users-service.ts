@@ -1,6 +1,6 @@
-import { UserDatabaseOutput } from "../../types";
+import { UserDatabaseOutput } from "../../../types";
 import { CreateUserDto } from "../users.dto";
-import { generateHash } from "../../utils";
+import { generateHash } from "../../../utils";
 import { userCqrsRepository } from "../repository/users-repository";
 import { userQueryRepository } from "../repository/query-users-repository";
 import * as bcrypt from "bcrypt";

@@ -44,6 +44,26 @@ export interface UserDatabase {
   createdAt: string;
 }
 
+export interface CommentDatabase {
+  _id: ObjectId;
+  content: string;
+  commentatorInfo: {
+    userId: string;
+    userLogin: string;
+  };
+  createdAt: string;
+}
+
+export interface CommentDatabaseOutput {
+  id: string;
+  content: string;
+  commentatorInfo: {
+    userId: string;
+    userLogin: string;
+  };
+  createdAt: string;
+}
+
 export interface UserDatabaseOutput {
   id: string;
   login: string;
@@ -70,4 +90,8 @@ export const TypeSortAskDesk: {
 } = {
   desc: -1,
   asc: 1,
+};
+
+export type ResultJwtCreate = {
+  accessToken: string;
 };

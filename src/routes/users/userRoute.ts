@@ -1,9 +1,9 @@
 import { Router, Request, Response } from "express";
-import { inputValidationMiddleware, isAuthMiddleware, isExistIdUserMiddleware } from "../middleware/input-validation-middleware";
+import { inputValidationMiddleware, isAuthMiddleware, isExistIdUserMiddleware } from "../..//middleware/input-validation-middleware";
 import { checkUserRoute } from "./schema";
 import { usersService } from "./service/users-service";
-import { QueryParams } from "../types";
-import { getQueryFromReqUser } from "../utils";
+import { QueryParams } from "../../types";
+import { getQueryFromReqUser } from "../../utils";
 import { userQueryRepository } from "./repository/query-users-repository";
 
 export const userRoute = Router({});

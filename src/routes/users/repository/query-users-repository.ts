@@ -1,12 +1,9 @@
 import { ObjectId } from "mongodb";
-import { usersCollections } from "../../setting";
-import { TypeSortAskDesk } from "../../types";
+import { usersCollections } from "../../../setting";
+import { TypeSortAskDesk } from "../../../types";
 
 export const userQueryRepository = {
   async findAllUsers({ searchLoginTerm = "", searchEmailTerm = "", sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }) {
-    // const searchLogin = searchLoginTerm ? { login: { $regex: new RegExp(searchLoginTerm, "i") } } : {};
-    // const searchEmail = searchEmailTerm ? { email: { $regex: new RegExp(searchEmailTerm, "i") } } : {};
-
     const filter = {
       $or: [{ login: { $regex: new RegExp(searchLoginTerm, "i") } }, { email: { $regex: new RegExp(searchEmailTerm, "i") } }],
     };

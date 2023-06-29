@@ -5,12 +5,13 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": ["./src/types/index.d.ts"]
 }

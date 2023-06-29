@@ -15,6 +15,9 @@ export const checkUserRoute = checkSchema({
     notEmpty: true,
     isString: true,
     isLength: { options: { min: 6, max: 20 } },
+    matches: {
+      options: [/^(?=.*[a-z])[a-zA-Z0-9]*$/],
+    },
   },
   email: {
     trim: true,
