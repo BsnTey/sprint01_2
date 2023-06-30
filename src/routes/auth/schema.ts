@@ -1,5 +1,5 @@
-import { checkSchema } from "express-validator";
-import { userQueryRepository } from "../users/repository/query-users-repository";
+import { checkSchema } from 'express-validator';
+import { userQueryRepository } from '../users/repository/query-users-repository';
 
 export const checkAuthRoute = checkSchema({
   loginOrEmail: {
@@ -25,10 +25,14 @@ export const isExistUserAuthRoute = checkSchema({
     },
     custom: {
       options: async (id, { req }) => {
-        const isLogin = await userQueryRepository.findUserByLogin(req.login);
+        const isLogin = await userQueryRepository.findUserByLogin(
+          req.body.login
+        );
+
         if (isLogin) {
           req.body.error = true;
-          throw new Error("Login is exist");
+
+          throw new Error('Login is exist');
         }
       },
     },
@@ -51,11 +55,10 @@ export const isExistUserAuthRoute = checkSchema({
     },
     custom: {
       options: async (id, { req }) => {
-        const user = await userQueryRepository.findUserByEmail(req.email);
-        console.log("check email");
+        const user = await userQueryRepository.findUserByEmail(req.body.email);
 
         if (user && !req.body.error) {
-          throw new Error("Email is exist");
+          throw new Error('Email is exist');
         }
       },
     },
@@ -67,6 +70,23 @@ export const checkAuthCodeRoute = checkSchema({
     trim: true,
     notEmpty: true,
     isUUID: true,
+    custom: {
+      options: async (id, { req }) => {
+        const user = await userQueryRepository.findUserByConfirmToken(
+          req.body.code
+        );
+        if (!user) {
+          throw new Error('Token is not found');
+        }
+        if (user.emailConfirmation.isConfirmed) {
+          throw new Error('Email has already been confirmed');
+        }
+
+        if (user.emailConfirmation.expirationDate < new Date()) {
+          throw new Error('Token expired');
+        }
+      },
+    },
   },
 });
 
@@ -82,12 +102,12 @@ export const checkAuthEmailRoute = checkSchema({
       options: async (id, { req }) => {
         const user = await userQueryRepository.findUserByEmail(req.body.email);
         if (!user) {
-          throw new Error("User with email is not found");
+          throw new Error('User with email is not found');
         }
         if (user.emailConfirmation.isConfirmed) {
-          throw new Error("Email has already been confirmed");
+          throw new Error('Email has already been confirmed');
         }
-        req.user.body = user;
+        req.body.user = user;
       },
     },
   },

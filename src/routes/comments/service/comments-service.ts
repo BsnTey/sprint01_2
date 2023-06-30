@@ -1,6 +1,6 @@
-import { CreateCommentImplUser } from "../comments.dto";
-import { commentCqrsRepository } from "../repository/comments-repository";
-import { commentQueryRepository } from "../repository/query-comments-repository";
+import { CreateCommentImplUser } from '../comments.dto';
+import { commentCqrsRepository } from '../repository/comments-repository';
+import { commentQueryRepository } from '../repository/query-comments-repository';
 
 export const commentsService = {
   async createComment(bodyParams: CreateCommentImplUser) {
@@ -15,7 +15,9 @@ export const commentsService = {
     };
 
     const resId = await commentCqrsRepository.insertComment(comment);
-    if (resId) return await commentQueryRepository.findCommentById(resId.toString());
+
+    if (resId)
+      return await commentQueryRepository.findCommentById(resId.toString());
     return null;
   },
 
