@@ -9,9 +9,13 @@ import { userQueryRepository } from "./repository/query-users-repository";
 export const userRoute = Router({});
 
 userRoute.post("/", isAuthMiddleware, checkUserRoute, inputValidationMiddleware, async (req: Request, res: Response) => {
-  const user = await usersService.createUser(req.body);
+  const userId = await usersService.createUser(req.body.login, req.body.email, req.body.password, true);
+  if (!userId) return res.sendStatus(520);
+
+  const user = await usersService.getUserById(userId);
+  if (!user) return res.sendStatus(520);
+
   if (user) return res.status(201).send(user);
-  return res.sendStatus(520);
 });
 
 userRoute.get("/", isAuthMiddleware, async (req: Request, res: Response) => {

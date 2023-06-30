@@ -129,3 +129,24 @@ export const isCommentOwnerMiddleware = async (req: Request, res: Response, next
   if (userId !== userIdComment) return res.sendStatus(403);
   next();
 };
+
+// export const isUserExistMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+//   const login = req.body.login;
+//   const email = req.body.email;
+
+//   const isEmail = userQueryRepository.findUserByEmail(email);
+//   if (isEmail) return res;
+
+//   const userId: string = req.params.id;
+//   if (!userId) {
+//     res.sendStatus(400);
+//     return;
+//   }
+//   const user = await userQueryRepository.findUserById(userId);
+//   if (!user) {
+//     res.sendStatus(404);
+//     return;
+//   }
+//   req.body["id"] = userId;
+//   next();
+// };

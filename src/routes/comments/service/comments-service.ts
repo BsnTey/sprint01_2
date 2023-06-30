@@ -9,7 +9,7 @@ export const commentsService = {
       content: bodyParams.content,
       commentatorInfo: {
         userId: bodyParams.user._id.toString(),
-        userLogin: bodyParams.user.login,
+        userLogin: bodyParams.user.accountData.login,
       },
       createdAt: new Date().toISOString(),
     };

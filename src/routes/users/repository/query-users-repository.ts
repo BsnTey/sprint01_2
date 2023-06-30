@@ -1,6 +1,6 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { usersCollections } from "../../../setting";
-import { TypeSortAskDesk } from "../../../types";
+import { TypeSortAskDesk, UserDatabase } from "../../../types";
 
 export const userQueryRepository = {
   async findAllUsers({ searchLoginTerm = "", searchEmailTerm = "", sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }) {
@@ -25,9 +25,9 @@ export const userQueryRepository = {
       const id = item._id.toString();
       return {
         id,
-        login: item.login,
-        email: item.email,
-        createdAt: item.createdAt,
+        login: item.accountData.login,
+        email: item.accountData.email,
+        createdAt: item.accountData.createdAt,
       };
     });
 
@@ -48,5 +48,19 @@ export const userQueryRepository = {
     return await usersCollections.findOne({
       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
     });
+  },
+
+  async findUserByLogin(login: string) {
+    return await usersCollections.findOne({ login: login });
+  },
+
+  async findUserByEmail(email: string) {
+    return await usersCollections.findOne({ email: email });
+  },
+
+  async findUserByConfirmToken(code: string): Promise<WithId<UserDatabase> | null> {
+    const userByToken = await usersCollections.findOne({ "emailConfirmation.confirmationCode": code });
+    if (!userByToken) return null;
+    return userByToken;
   },
 };

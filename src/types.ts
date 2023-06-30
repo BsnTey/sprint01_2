@@ -35,14 +35,27 @@ export interface PostDatabase {
   createdAt: string;
 }
 
-export interface UserDatabase {
-  _id: ObjectId;
+export type UserAccountType = {
   login: string;
   email: string;
-  passwordHash: string;
   passwordSalt: string;
+  passwordHash: string;
   createdAt: string;
-}
+};
+
+// export type UserAccountOutDBType = Omit<UserAccountInDBType, "_id">;
+
+export type EmailConfirmationType = {
+  confirmationCode: string;
+  expirationDate: Date;
+  isConfirmed: boolean;
+};
+
+export type UserDatabase = {
+  _id: ObjectId;
+  accountData: UserAccountType;
+  emailConfirmation: EmailConfirmationType;
+};
 
 export interface CommentDatabase {
   _id: ObjectId;
