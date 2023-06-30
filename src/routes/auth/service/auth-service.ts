@@ -18,7 +18,7 @@ export const authService = {
 
     const emailMess = await emailManager.sendEmailRegister(email, user.emailConfirmation.confirmationCode);
     if (!emailMess) return false;
-
+    console.log("emailMess", emailMess);
     return true;
   },
 

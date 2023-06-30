@@ -11,8 +11,11 @@ export const emailManager = {
 
     try {
       const info = await emailAdapter.sendEmail(email, subject, message);
+      console.log("info", info);
+
       if (info.accepted) return info.messageId;
     } catch (err) {
+      console.log("error", err);
       return null;
     }
     return null;

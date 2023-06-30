@@ -51,11 +51,11 @@ export const userQueryRepository = {
   },
 
   async findUserByLogin(login: string) {
-    return await usersCollections.findOne({ login: login });
+    return await usersCollections.findOne({ login: new RegExp(`^${login}$`, "i") });
   },
 
   async findUserByEmail(email: string) {
-    return await usersCollections.findOne({ email: email });
+    return await usersCollections.findOne({ "accountData.email": new RegExp(`^${email}$`, "i") });
   },
 
   async findUserByConfirmToken(code: string): Promise<WithId<UserDatabase> | null> {

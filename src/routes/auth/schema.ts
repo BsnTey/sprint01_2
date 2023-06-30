@@ -27,6 +27,7 @@ export const isExistUserAuthRoute = checkSchema({
       options: async (id, { req }) => {
         const isLogin = await userQueryRepository.findUserByLogin(req.login);
         if (isLogin) {
+          req.body.error = true;
           throw new Error("Login is exist");
         }
       },
@@ -51,7 +52,9 @@ export const isExistUserAuthRoute = checkSchema({
     custom: {
       options: async (id, { req }) => {
         const user = await userQueryRepository.findUserByEmail(req.email);
-        if (user) {
+        console.log("check email");
+
+        if (user && !req.body.error) {
           throw new Error("Email is exist");
         }
       },
@@ -77,7 +80,7 @@ export const checkAuthEmailRoute = checkSchema({
     },
     custom: {
       options: async (id, { req }) => {
-        const user = await userQueryRepository.findUserByEmail(req.email);
+        const user = await userQueryRepository.findUserByEmail(req.body.email);
         if (!user) {
           throw new Error("User with email is not found");
         }

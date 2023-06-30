@@ -19,9 +19,9 @@ authRoute.post("/login", checkAuthRoute, inputValidationMiddleware, async (req: 
   return res.sendStatus(401);
 });
 
-authRoute.get("/confirm-email/:code", checkAuthCodeRoute, inputValidationMiddleware, async (req: Request, res: Response) => {
-  const code = req.params.code;
-  const resAuth = await authService.confirmEmail(code);
+authRoute.get("/confirm-email/", checkAuthCodeRoute, inputValidationMiddleware, async (req: Request, res: Response) => {
+  const code = req.query.code;
+  const resAuth = await authService.confirmEmail(code!.toString());
   if (resAuth) return res.send("<h1>Email подтвержден</h1>");
   return res.send("<h1>Email Не был подтвержден</h1>");
 });
