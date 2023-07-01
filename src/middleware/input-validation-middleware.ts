@@ -1,20 +1,28 @@
-import { Request, Response } from "express";
-import { NextFunction } from "express";
-import { validationResult } from "express-validator";
-import { blogQueryRepository } from "../routes/blog/repository/query-blogs-repository";
-import { postQueryRepository } from "../routes/post/repository/query-posts-repository";
-import { userQueryRepository } from "../routes/users/repository/query-users-repository";
-import { jwtService } from "../application/jwtService";
-import { commentQueryRepository } from "../routes/comments/repository/query-comments-repository";
+import { Request, Response } from 'express';
+import { NextFunction } from 'express';
+import { validationResult } from 'express-validator';
+import { blogQueryRepository } from '../routes/blog/repository/query-blogs-repository';
+import { postQueryRepository } from '../routes/post/repository/query-posts-repository';
+import { userQueryRepository } from '../routes/users/repository/query-users-repository';
+import { jwtService } from '../application/jwtService';
+import jwt from 'jsonwebtoken';
+import { jwt_access_secret, jwt_refresh_secret } from '../constant';
+import { commentQueryRepository } from '../routes/comments/repository/query-comments-repository';
 
-export const inputValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const inputValidationMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    const reformattedErrors = errors.array({ onlyFirstError: true }).map((err) => {
-      // @ts-ignore
-      return { message: err.msg, field: err.path };
-    });
+    const reformattedErrors = errors
+      .array({ onlyFirstError: true })
+      .map((err) => {
+        // @ts-ignore
+        return { message: err.msg, field: err.path };
+      });
 
     res.status(400).json({ errorsMessages: reformattedErrors });
   } else {
@@ -22,9 +30,13 @@ export const inputValidationMiddleware = (req: Request, res: Response, next: Nex
   }
 };
 
-export const isAuthMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const isAuthMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const authHeader: string | undefined = req.headers.authorization;
-  if (authHeader !== "Basic YWRtaW46cXdlcnR5") {
+  if (authHeader !== 'Basic YWRtaW46cXdlcnR5') {
     res.sendStatus(401);
     return;
   } else {
@@ -32,11 +44,15 @@ export const isAuthMiddleware = (req: Request, res: Response, next: NextFunction
   }
 };
 
-export const authBearerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const authBearerMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const authHeader: string | undefined = req.headers.authorization;
 
   if (!authHeader) return res.sendStatus(401);
-  const token = authHeader.split(" ")[1];
+  const token = authHeader.split(' ')[1];
   const userId = await jwtService.getUserByToken(token);
 
   if (!userId) return res.sendStatus(401);
@@ -45,12 +61,51 @@ export const authBearerMiddleware = async (req: Request, res: Response, next: Ne
     res.sendStatus(404);
     return;
   }
-  //зачем то записываем всего юзера?
-  req.body["user"] = user;
+
+  req.body['user'] = user;
   next();
 };
 
-export const isValidIdMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const verifyTokenRefresh = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken)
+    return res.status(401).send({ message: 'No token provided!' });
+
+  jwt.verify(refreshToken, jwt_refresh_secret, (err: any, decoded: any) => {
+    if (err) {
+      return res.status(401).send({ message: 'No verify token!' });
+    }
+    req.userId = decoded.id;
+    next();
+  });
+};
+
+// const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
+//   const accessToken = req.cookies.accessToken;
+
+//   if (!accessToken) {
+//     return res.status(401).send({ message: 'No token provided!' });
+//   }
+
+//   jwt.verify(accessToken, jwt_access_secret, (err: any, decoded: any) => {
+//     if (err) {
+//       return res.status(403).send({ message: 'No verify token!' });
+//     }
+//     req.body.userId = decoded.id;
+//     next();
+//   });
+// };
+
+export const isValidIdMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const id: string = req.params.id;
   if (!id) {
     res.sendStatus(404);
@@ -59,7 +114,11 @@ export const isValidIdMiddleware = (req: Request, res: Response, next: NextFunct
     next();
   }
 };
-export const isExistIdBlogMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const isExistIdBlogMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const blogId: string = req.params.id;
   if (!blogId) {
     res.sendStatus(400);
@@ -71,12 +130,16 @@ export const isExistIdBlogMiddleware = async (req: Request, res: Response, next:
     return;
   }
 
-  req.body["blogId"] = blog.id;
-  req.body["blogName"] = blog.name;
+  req.body['blogId'] = blog.id;
+  req.body['blogName'] = blog.name;
   next();
 };
 
-export const isExistIdPostMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const isExistIdPostMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const postId: string = req.params.id;
   if (!postId) {
     res.sendStatus(400);
@@ -89,7 +152,7 @@ export const isExistIdPostMiddleware = async (req: Request, res: Response, next:
       res.sendStatus(404);
       return;
     }
-    req.body["postId"] = post.id;
+    req.body['postId'] = post.id;
     next();
   } catch (error) {
     res.sendStatus(404);
@@ -97,7 +160,11 @@ export const isExistIdPostMiddleware = async (req: Request, res: Response, next:
   }
 };
 
-export const isExistIdUserMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const isExistIdUserMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const userId: string = req.params.id;
   if (!userId) {
     res.sendStatus(400);
@@ -108,22 +175,30 @@ export const isExistIdUserMiddleware = async (req: Request, res: Response, next:
     res.sendStatus(404);
     return;
   }
-  req.body["id"] = userId;
+  req.body['id'] = userId;
   next();
 };
 
-export const isExistIdCommentMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const isExistIdCommentMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const commentId: string = req.params.id;
   if (!commentId) return res.sendStatus(400);
 
   const comment = await commentQueryRepository.findCommentById(commentId);
   if (!comment) return res.sendStatus(404);
 
-  req.body["comment"] = comment;
+  req.body['comment'] = comment;
   next();
 };
 
-export const isCommentOwnerMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const isCommentOwnerMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const userId = req.body.user._id.toString();
   const userIdComment = req.body.comment.commentatorInfo.userId;
   if (userId !== userIdComment) return res.sendStatus(403);

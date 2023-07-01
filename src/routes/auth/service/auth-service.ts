@@ -5,7 +5,7 @@ import { generateHash } from '../../../utils';
 import { usersService } from '../../users/service/users-service';
 import { emailManager } from '../../../managers/email-managers';
 import { authCqrsRepository } from '../repository/auth-repository';
-import { WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 
 export const authService = {
@@ -31,18 +31,33 @@ export const authService = {
   async loginUser(
     loginOrEmail: string,
     password: string
-  ): Promise<boolean | ResultJwtCreate> {
+  ): Promise<null | ResultJwtCreate> {
     const user = await userQueryRepository.findUserByLoginOrEmail(loginOrEmail);
 
-    if (!user) return false;
+    if (!user) return null;
     const passwordHash = await generateHash(
       password,
       user.accountData.passwordSalt
     );
 
-    if (user.accountData.passwordHash !== passwordHash) return false;
-    const token = await jwtService.createJwt(user);
-    return token;
+    if (user.accountData.passwordHash !== passwordHash) return null;
+    const userId = user._id.toString();
+    const tokens = await this.doTokens(userId);
+    if (tokens) return tokens;
+    return null;
+  },
+
+  async doTokens(userId: string): Promise<null | ResultJwtCreate> {
+    const tokens = await jwtService.createJwt({
+      id: userId,
+    });
+    const resSave = await jwtService.saveToken(userId, tokens.refreshToken);
+    if (resSave) return tokens;
+    return null;
+  },
+
+  async removeRefresh(userId: string, token: string): Promise<boolean> {
+    return await authCqrsRepository.removeToken(new ObjectId(userId), token);
   },
 
   async confirmEmail(code: string): Promise<boolean> {

@@ -1,19 +1,33 @@
-import { jwt_secret } from "../constant";
-import { UserDatabase } from "../types";
-import jwt from "jsonwebtoken";
-import { ResultJwtCreate } from "../types";
+import { jwt_access_secret, jwt_refresh_secret } from '../constant';
+import jwt from 'jsonwebtoken';
+import { ResultJwtCreate } from '../types';
+import { authCqrsRepository } from '../routes/auth/repository/auth-repository';
+import { ObjectId } from 'mongodb';
 
 export const jwtService = {
-  async createJwt(user: UserDatabase): Promise<ResultJwtCreate> {
-    const token = jwt.sign({ userId: user._id.toString() }, jwt_secret, { expiresIn: "1h" });
+  async createJwt(payload: any): Promise<ResultJwtCreate> {
+    const accessToken = jwt.sign(payload, jwt_access_secret, {
+      expiresIn: 1000,
+    });
+    const refreshToken = jwt.sign(payload, jwt_refresh_secret, {
+      expiresIn: 10000,
+    });
     return {
-      accessToken: token,
+      accessToken,
+      refreshToken,
     };
+  },
+
+  async saveToken(userId: string, refreshToken: string): Promise<boolean> {
+    return await authCqrsRepository.saveToken(
+      new ObjectId(userId),
+      refreshToken
+    );
   },
 
   async getUserByToken(token: string) {
     try {
-      const result: any = jwt.verify(token, jwt_secret);
+      const result: any = jwt.verify(token, jwt_access_secret);
       return result.userId;
     } catch (err) {
       return null;

@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { ObjectId, SortDirection } from "mongodb";
+import { Request, Response } from 'express';
+import { ObjectId, SortDirection } from 'mongodb';
 
 export type RequestBody<T> = Request<{}, {}, T>;
 export type RequestBodyBlogId<T> = Request<{ blogId: string }, {}, T>;
@@ -51,10 +51,15 @@ export type EmailConfirmationType = {
   isConfirmed: boolean;
 };
 
+export type TokenType = {
+  refreshTokens: string[];
+};
+
 export type UserDatabase = {
   _id: ObjectId;
   accountData: UserAccountType;
   emailConfirmation: EmailConfirmationType;
+  tokenData: TokenType;
 };
 
 export interface CommentDatabase {
@@ -109,6 +114,7 @@ export const TypeSortAskDesk: {
 
 export type ResultJwtCreate = {
   accessToken: string;
+  refreshToken: string;
 };
 
 export type QueryTypeId = {

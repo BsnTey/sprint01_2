@@ -9,6 +9,7 @@ import { authService } from './service/auth-service';
 import {
   authBearerMiddleware,
   inputValidationMiddleware,
+  verifyTokenRefresh,
 } from '../../middleware/input-validation-middleware';
 
 export const authRoute = Router({});
@@ -33,11 +34,52 @@ authRoute.post(
   checkAuthRoute,
   inputValidationMiddleware,
   async (req: Request, res: Response) => {
-    const loginOrEmail = req.body.loginOrEmail;
-    const password = req.body.password;
-    const resAuth = await authService.loginUser(loginOrEmail, password);
-    if (resAuth) return res.status(200).json(resAuth);
+    const { loginOrEmail, password } = req.body;
+    const resTokens = await authService.loginUser(loginOrEmail, password);
+
+    if (resTokens) {
+      res.cookie('refreshToken', resTokens.refreshToken, {
+        httpOnly: true,
+        secure: false,
+      });
+      return res.status(200).json({ accessToken: resTokens.accessToken });
+    }
     return res.sendStatus(401);
+  }
+);
+
+authRoute.post(
+  '/refresh-token',
+  verifyTokenRefresh,
+  async (req: Request, res: Response) => {
+    const userId = req.userId;
+    const refreshToken = req.cookies.refreshToken;
+
+    const tokens = await authService.doTokens(userId);
+    if (!tokens) return res.sendStatus(500);
+
+    const resDel = await authService.removeRefresh(userId, refreshToken);
+    if (!resDel) return res.sendStatus(500);
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: false,
+    });
+    return res.status(200).json({ accessToken: tokens.accessToken });
+  }
+);
+
+authRoute.post(
+  '/logout',
+  verifyTokenRefresh,
+  async (req: Request, res: Response) => {
+    const userId = req.userId;
+    const refreshToken = req.cookies.refreshToken;
+
+    const resDel = await authService.removeRefresh(userId, refreshToken);
+    if (!resDel) return res.sendStatus(500);
+
+    return res.sendStatus(204);
   }
 );
 
