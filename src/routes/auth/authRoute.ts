@@ -40,7 +40,7 @@ authRoute.post(
     if (resTokens) {
       res.cookie('refreshToken', resTokens.refreshToken, {
         httpOnly: true,
-        secure: false,
+        secure: true,
       });
       return res.status(200).json({ accessToken: resTokens.accessToken });
     }
@@ -63,7 +63,7 @@ authRoute.post(
 
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: true,
     });
     return res.status(200).json({ accessToken: tokens.accessToken });
   }
