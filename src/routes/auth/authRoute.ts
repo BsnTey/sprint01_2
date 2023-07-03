@@ -2,9 +2,10 @@ import { Router, Request, Response } from "express";
 import { checkAuthCodeRoute, checkAuthEmailRoute, checkAuthRoute, isExistUserAuthRoute } from "./schema";
 import { authService } from "./service/auth-service";
 import { authBearerMiddleware, chekTokenInArray, inputValidationMiddleware, verifyTokenRefresh } from "../../middleware/input-validation-middleware";
+import { userQueryRepository } from "../users/repository/query-users-repository";
 
 export const authRoute = Router({});
-const secureHttp = true;
+const secureHttp = false;
 
 authRoute.post("/registration", isExistUserAuthRoute, inputValidationMiddleware, async (req: Request, res: Response) => {
   const resAuth = await authService.registerUser(req.body.login, req.body.email, req.body.password);
@@ -26,15 +27,20 @@ authRoute.post("/login", checkAuthRoute, inputValidationMiddleware, async (req: 
   return res.sendStatus(401);
 });
 
-authRoute.post("/refresh-token", verifyTokenRefresh, async (req: Request, res: Response) => {
+authRoute.post("/refresh-token", verifyTokenRefresh, chekTokenInArray, async (req: Request, res: Response) => {
   const userId = req.userId;
   const refreshToken = req.cookies.refreshToken;
+  const tokenss = await userQueryRepository.findUserById(userId);
+  console.log("Before refresh", tokenss?.tokenData.refreshTokens);
 
   const tokens = await authService.doTokens(userId);
   if (!tokens) return res.sendStatus(500);
 
   const resDel = await authService.removeRefresh(userId, refreshToken);
   if (!resDel) return res.sendStatus(500);
+
+  const tokensss = await userQueryRepository.findUserById(userId);
+  console.log("After refresh", tokensss?.tokenData.refreshTokens);
 
   res.cookie("refreshToken", tokens.refreshToken, {
     httpOnly: true,

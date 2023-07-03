@@ -7,10 +7,10 @@ import { ObjectId } from "mongodb";
 export const jwtService = {
   async createJwt(payload: any): Promise<ResultJwtCreate> {
     const accessToken = jwt.sign(payload, jwt_access_secret, {
-      expiresIn: 10,
+      expiresIn: 100,
     });
     const refreshToken = jwt.sign(payload, jwt_refresh_secret, {
-      expiresIn: 20,
+      expiresIn: 200,
     });
     return {
       accessToken,
