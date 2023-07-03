@@ -5,7 +5,7 @@ import { authBearerMiddleware, chekTokenInArray, inputValidationMiddleware, veri
 import { userQueryRepository } from "../users/repository/query-users-repository";
 
 export const authRoute = Router({});
-const secureHttp = false;
+const secureHttp = true;
 
 authRoute.post("/registration", isExistUserAuthRoute, inputValidationMiddleware, async (req: Request, res: Response) => {
   const resAuth = await authService.registerUser(req.body.login, req.body.email, req.body.password);
