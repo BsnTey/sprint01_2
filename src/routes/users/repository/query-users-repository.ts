@@ -1,21 +1,11 @@
-import { ObjectId, WithId } from 'mongodb';
-import { usersCollections } from '../../../setting';
-import { TypeSortAskDesk, UserDatabase } from '../../../types';
+import { ObjectId, WithId } from "mongodb";
+import { usersCollections } from "../../../setting";
+import { TypeSortAskDesk, UserDatabase } from "../../../types";
 
 export const userQueryRepository = {
-  async findAllUsers({
-    searchLoginTerm = '',
-    searchEmailTerm = '',
-    sortBy = 'createdAt',
-    sortDirection = 'desc',
-    pageNumber = 1,
-    pageSize = 10,
-  }) {
+  async findAllUsers({ searchLoginTerm = "", searchEmailTerm = "", sortBy = "createdAt", sortDirection = "desc", pageNumber = 1, pageSize = 10 }) {
     const filter = {
-      $or: [
-        { 'accountData.login': { $regex: new RegExp(searchLoginTerm, 'i') } },
-        { 'accountData.email': { $regex: new RegExp(searchEmailTerm, 'i') } },
-      ],
+      $or: [{ "accountData.login": { $regex: new RegExp(searchLoginTerm, "i") } }, { "accountData.email": { $regex: new RegExp(searchEmailTerm, "i") } }],
     };
 
     const totalCount = await usersCollections.countDocuments(filter);
@@ -56,30 +46,25 @@ export const userQueryRepository = {
 
   async findUserByLoginOrEmail(loginOrEmail: string) {
     return await usersCollections.findOne({
-      $or: [
-        { 'accountData.login': loginOrEmail },
-        { 'accountData.email': loginOrEmail },
-      ],
+      $or: [{ "accountData.login": loginOrEmail }, { "accountData.email": loginOrEmail }],
     });
   },
 
   async findUserByLogin(login: string) {
     return await usersCollections.findOne({
-      'accountData.login': new RegExp(`^${login}$`, 'i'),
+      "accountData.login": new RegExp(`^${login}$`, "i"),
     });
   },
 
   async findUserByEmail(email: string) {
     return await usersCollections.findOne({
-      'accountData.email': new RegExp(`^${email}$`, 'i'),
+      "accountData.email": new RegExp(`^${email}$`, "i"),
     });
   },
 
-  async findUserByConfirmToken(
-    code: string
-  ): Promise<WithId<UserDatabase> | null> {
+  async findUserByConfirmToken(code: string): Promise<WithId<UserDatabase> | null> {
     const userByToken = await usersCollections.findOne({
-      'emailConfirmation.confirmationCode': code,
+      "emailConfirmation.confirmationCode": code,
     });
     if (!userByToken) return null;
     return userByToken;

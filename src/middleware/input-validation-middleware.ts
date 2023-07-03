@@ -56,33 +56,23 @@ export const authBearerMiddleware = async (req: Request, res: Response, next: Ne
 
 export const verifyTokenRefresh = async (req: Request, res: Response, next: NextFunction) => {
   const refreshToken = req.cookies.refreshToken;
-
   if (!refreshToken) return res.status(401).send({ message: "No token provided!" });
-
-  jwt.verify(refreshToken, jwt_refresh_secret, (err: any, decoded: any) => {
-    if (err) {
-      return res.status(401).send({ message: "No verify token!" });
-    }
+  jwt.verify(refreshToken, jwt_refresh_secret, async (err: any, decoded: any) => {
+    if (err) return res.status(401).send({ message: "No verify token!" });
     req.userId = decoded.id;
     next();
   });
 };
 
-// const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
-//   const accessToken = req.cookies.accessToken;
-
-//   if (!accessToken) {
-//     return res.status(401).send({ message: 'No token provided!' });
-//   }
-
-//   jwt.verify(accessToken, jwt_access_secret, (err: any, decoded: any) => {
-//     if (err) {
-//       return res.status(403).send({ message: 'No verify token!' });
-//     }
-//     req.body.userId = decoded.id;
-//     next();
-//   });
-// };
+export const chekTokenInArray = async (req: Request, res: Response, next: NextFunction) => {
+  const refreshToken = req.cookies.refreshToken;
+  const userId = req.userId;
+  const user = await userQueryRepository.findUserById(userId);
+  if (user && !user.tokenData.refreshTokens.includes(refreshToken)) {
+    return res.status(401).send({ message: "No valid token!" });
+  }
+  next();
+};
 
 export const isValidIdMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const id: string = req.params.id;

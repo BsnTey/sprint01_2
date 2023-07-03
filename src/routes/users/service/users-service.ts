@@ -1,18 +1,13 @@
-import { UserDatabaseOutput } from '../../../types';
-import { generateHash } from '../../../utils';
-import { userCqrsRepository } from '../repository/users-repository';
-import { userQueryRepository } from '../repository/query-users-repository';
-import * as bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
-import add from 'date-fns/add';
+import { UserDatabaseOutput } from "../../../types";
+import { generateHash } from "../../../utils";
+import { userCqrsRepository } from "../repository/users-repository";
+import { userQueryRepository } from "../repository/query-users-repository";
+import * as bcrypt from "bcrypt";
+import { v4 as uuidv4 } from "uuid";
+import add from "date-fns/add";
 
 export const usersService = {
-  async createUser(
-    login: string,
-    email: string,
-    password: string,
-    needCofirmed = false
-  ): Promise<string | null> {
+  async createUser(login: string, email: string, password: string, needCofirmed = false): Promise<string | null> {
     const passwordSalt = await bcrypt.genSalt(14);
     const passwordHash = await generateHash(password, passwordSalt);
 
@@ -31,7 +26,9 @@ export const usersService = {
         }),
         isConfirmed: needCofirmed,
       },
-      refreshTokens: [],
+      tokenData: {
+        refreshTokens: [],
+      },
     };
 
     const resId = await userCqrsRepository.insertUser(user);

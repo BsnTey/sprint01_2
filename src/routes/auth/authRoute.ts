@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { checkAuthCodeRoute, checkAuthEmailRoute, checkAuthRoute, isExistUserAuthRoute } from "./schema";
 import { authService } from "./service/auth-service";
-import { authBearerMiddleware, inputValidationMiddleware, verifyTokenRefresh } from "../../middleware/input-validation-middleware";
+import { authBearerMiddleware, chekTokenInArray, inputValidationMiddleware, verifyTokenRefresh } from "../../middleware/input-validation-middleware";
 
 export const authRoute = Router({});
 const secureHttp = true;
@@ -43,7 +43,7 @@ authRoute.post("/refresh-token", verifyTokenRefresh, async (req: Request, res: R
   return res.status(200).json({ accessToken: tokens.accessToken });
 });
 
-authRoute.post("/logout", verifyTokenRefresh, async (req: Request, res: Response) => {
+authRoute.post("/logout", verifyTokenRefresh, chekTokenInArray, async (req: Request, res: Response) => {
   const userId = req.userId;
   const refreshToken = req.cookies.refreshToken;
 
